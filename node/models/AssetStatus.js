@@ -7,7 +7,7 @@ const AssetStatus = sequelize.define('AssetStatus', {
         allowNull: false,
     },
     status: {
-        type: DataTypes.STRING,
+        type: DataTypes.BIGINT,
         allowNull: false,
     },
     updated_at: {

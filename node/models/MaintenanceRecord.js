@@ -8,6 +8,7 @@ const MaintenanceRecord = sequelize.define('MaintenanceRecord', {
     },
     maintenance_date: {
         type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
         allowNull: false,
     },
     description: {
