@@ -1,16 +1,23 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('./index');
+import { DataTypes } from 'sequelize';
+import sequelize from './index.js';
 
 const AssetStatus = sequelize.define('AssetStatus', {
-    asset_id: DataTypes.BIGINT,
-    status: DataTypes.STRING,
+    asset_id: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
+    },
+    status: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     updated_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
+        allowNull: false,
     },
 }, {
     tableName: 'asset_status',
     timestamps: false,
 });
 
-module.exports = AssetStatus;
+export default AssetStatus;

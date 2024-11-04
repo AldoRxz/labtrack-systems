@@ -1,17 +1,27 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('./index');
+import { DataTypes } from 'sequelize';
+import sequelize from './index.js';
 
 const ObservationHistory = sequelize.define('ObservationHistory', {
-    asset_id: DataTypes.BIGINT,
-    observation: DataTypes.TEXT,
+    asset_id: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
+    },
+    observation: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
     observed_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
+        allowNull: false,
     },
-    observed_by: DataTypes.STRING,
+    observed_by: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
 }, {
     tableName: 'observation_history',
     timestamps: false,
 });
 
-module.exports = ObservationHistory;
+export default ObservationHistory;
