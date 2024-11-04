@@ -1,4 +1,7 @@
+import Location from '../models/Location.js';
+import Asset from '../models/Asset.js';
 import AssetStatus from '../models/AssetStatus.js';
+
 
 export const getAllAssetStatus = async (req, res) => {
     try {
@@ -20,9 +23,9 @@ export const createAssetStatus = async (req, res) => {
 
 export const getAssetStatusById = async (req, res) => {
     try {
-        const assetStatus = await AssetStatus.findByPk(req.params.id);
-        if (assetStatus) {
-            res.json(assetStatus);
+        const status = await AssetStatus.findByPk(req.params.id);
+        if (status) {
+            res.json(status);
         } else {
             res.status(404).json({ error: 'Estado del activo no encontrado' });
         }

@@ -1,4 +1,6 @@
 import Location from '../models/Location.js';
+import Asset from '../models/Asset.js';
+import AssetStatus from '../models/AssetStatus.js'; 
 
 export const getAllLocations = async (req, res) => {
     try {
@@ -20,13 +22,28 @@ export const createLocation = async (req, res) => {
 
 export const getLocationById = async (req, res) => {
     try {
-        const location = await Location.findByPk(req.params.id);
+        const location = await Location.findByPk(req.params.id, {
+            include: [
+                {
+                    model: Asset, 
+                    as: 'Assets',
+                    include: [
+                        {
+                            model: AssetStatus,
+                            as: 'Status'
+                        }
+                    ]
+                },
+            ],
+        });
+
         if (location) {
             res.json(location);
         } else {
             res.status(404).json({ error: 'Ubicación no encontrada' });
         }
     } catch (error) {
+        console.error('Error al obtener la ubicación:', error);
         res.status(500).json({ error: 'Error al obtener la ubicación' });
     }
 };

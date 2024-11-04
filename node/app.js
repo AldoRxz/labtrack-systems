@@ -1,5 +1,8 @@
 import express from 'express';
 import cors from 'cors';
+
+import './models/associations.js'; 
+
 import assetRoutes from './routes/assets.js';
 import assetStatusRoutes from './routes/assetStatus.js';
 import maintenanceRecordRoutes from './routes/maintenanceRecords.js';
