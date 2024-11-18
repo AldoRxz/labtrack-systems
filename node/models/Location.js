@@ -11,6 +11,10 @@ const Location = sequelize.define('Location', {
         type: DataTypes.TEXT,
         allowNull: true,
     },
+    piso: {
+        type: DataTypes.INTEGER, // Nueva columna "piso"
+        allowNull: false,
+    },
 }, {
     tableName: 'locations',
     timestamps: false,

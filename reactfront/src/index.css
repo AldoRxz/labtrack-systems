@@ -1,11 +1,22 @@
-body {
+html, body {
+  background-color: #282c34; /* Fondo oscuro */
+  color: white; /* Texto blanco */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  padding: 0;
+  height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+#root {
+  min-height: 100vh; /* Asegura que el contenedor raíz cubra toda la pantalla */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: #282c34;
+}
+
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
@@ -13,6 +24,7 @@ code {
 }
 
 .main-content {
+  flex: 1;
   text-align: center;
   padding: 50px;
   background-color: #282c34;
@@ -48,5 +60,29 @@ code {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.container {
+  color: white; /* Asegura que el texto en los contenedores sea blanco */
+  flex: 1; /* Permite que el contenedor se expanda */
+}
+
+h1, h2, h3, p, a {
+  color: white; /* Asegura que los encabezados, párrafos y enlaces sean blancos */
+}
+
+/* Botones y enlaces */
+a {
+  color: #61dafb; /* Cambia el color de los enlaces a un azul claro */
+  text-decoration: none;
+}
+
+.btn {
+  color: white;
+  border: none;
+}
+
+.modal-content {
+  color: black; /* Cambia el color del texto a negro */
 }
 
