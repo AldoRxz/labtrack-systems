@@ -1,21 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "../axios/axiosConfig";
+
+import { useNavigate } from "react-router-dom";
+
 
 const LocationsPage = () => {
   const [locations, setLocations] = useState([]);
+  const navigate = useNavigate();
   const [newLocation, setNewLocation] = useState({
     name: "",
     description: "",
-    floor: "",
+    piso: "",
   });
   const [editLocation, setEditLocation] = useState({});
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
+  // Fetch locations when the component mounts
   useEffect(() => {
     fetchLocations();
   }, []);
 
+  // Fetch all locations from the server
   const fetchLocations = async () => {
     try {
       const response = await axios.get("/locations");
@@ -25,58 +31,53 @@ const LocationsPage = () => {
     }
   };
 
+  // Handle adding a new location
   const handleAddLocation = async () => {
+    if (!newLocation.name || !newLocation.piso) {
+      alert("Por favor, completa todos los campos obligatorios.");
+      return;
+    }
     try {
-      const response = await axios.post("/locations", {
-        name: newLocation.name,
-        description: newLocation.description,
-        piso: newLocation.piso,
-      });
-      // Actualizar el estado de las locaciones con la nueva locación
-      setLocations((prevLocations) => [...prevLocations, response.data]);
-      setNewLocation({ name: "", description: "", piso: null }); // Resetea el formulario
-      setShowAddModal(false); // Cierra la modal
+      const response = await axios.post("/locations", newLocation);
+      setLocations([...locations, response.data]);
+      setNewLocation({ name: "", description: "", piso: "" });
+      setShowAddModal(false);
     } catch (error) {
-      console.error("Error al agregar la locación:", error);
+      console.error("Error adding location:", error);
     }
   };
 
+  // Handle editing an existing location
   const handleEditLocation = async () => {
+    if (!editLocation.name || !editLocation.piso) {
+      alert("Por favor, completa todos los campos obligatorios.");
+      return;
+    }
     try {
-      // Enviar los cambios al servidor
-      const response = await axios.put(`/locations/${editLocation.id}`, {
-        name: editLocation.name,
-        description: editLocation.description,
-        piso: editLocation.piso,
-      });
-  
-      // Actualizar la locación en el estado de locaciones
-      setLocations((prevLocations) =>
-        prevLocations.map((loc) =>
+      const response = await axios.put(`/locations/${editLocation.id}`, editLocation);
+      setLocations(
+        locations.map((loc) =>
           loc.id === editLocation.id ? response.data : loc
         )
       );
-  
-      // Cerrar la modal y limpiar el estado de edición
+      setEditLocation({});
       setShowEditModal(false);
-      setEditLocation(null);
     } catch (error) {
-      console.error("Error al actualizar la locación:", error);
+      console.error("Error editing location:", error);
     }
   };
 
+  // Handle deleting a location
   const handleDeleteLocation = async (id) => {
+    if (!window.confirm("¿Estás seguro de que deseas eliminar esta locación?")) {
+      return;
+    }
     try {
       await axios.delete(`/locations/${id}`);
-      setLocations(locations.filter((location) => location.id !== id));
+      setLocations(locations.filter((loc) => loc.id !== id));
     } catch (error) {
       console.error("Error deleting location:", error);
     }
-  };
-
-  const handleEdit = (location) => {
-    setEditLocation(location);
-    setShowEditModal(true);
   };
 
   return (
@@ -88,6 +89,7 @@ const LocationsPage = () => {
       >
         Agregar Locación
       </button>
+
       <table className="table table-dark table-hover">
         <thead>
           <tr>
@@ -99,23 +101,24 @@ const LocationsPage = () => {
         </thead>
         <tbody>
           {locations.map((location) => (
-            <tr key={location.id} style={{ cursor: "pointer" }}>
-              <td>
-                <a
-                  href={`/location/${location.id}`}
-                  style={{ color: "#61dafb", textDecoration: "none" }}
-                >
-                  {location.name}
-                </a>
+            <tr key={location.id}>
+              <td
+                style={{ cursor: "pointer", color: "#61dafb" }}
+                onClick={() => navigate(`/locations/${location.id}`)}
+              >
+                {location.name}
               </td>
               <td>{location.description}</td>
               <td>{location.piso}</td>
               <td>
                 <button
                   className="btn btn-warning btn-sm me-2"
-                  onClick={() => handleEdit(location)}
+                  onClick={() => {
+                    setEditLocation(location);
+                    setShowEditModal(true);
+                  }}
                 >
-                  <i className="fa-solid fa-pen-to-square"></i>
+                   <i className="fa-solid fa-pen-to-square"></i>
                 </button>
                 <button
                   className="btn btn-danger btn-sm"
@@ -123,6 +126,8 @@ const LocationsPage = () => {
                 >
                   <i className="fa-solid fa-trash"></i>
                 </button>
+
+                
               </td>
             </tr>
           ))}
@@ -133,29 +138,18 @@ const LocationsPage = () => {
       {showAddModal && (
         <div className="modal show d-block" tabIndex="-1">
           <div className="modal-dialog">
-            <div
-              className="modal-content"
-              style={{
-                backgroundColor: "#2b2f38", 
-                color: "white", 
-              }}
-            >
+            <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title" style={{ color: "#61dafb" }}>
-                  Agregar Locación
-                </h5>
+                <h5 className="modal-title">Agregar Locación</h5>
                 <button
                   type="button"
                   className="btn-close"
-                  style={{ color: "white" }}
                   onClick={() => setShowAddModal(false)}
                 ></button>
               </div>
               <div className="modal-body">
-                <div className="mb-3 text-start"> 
-                  <label className="form-label" style={{ color: "#61dafb" }}>
-                    Nombre
-                  </label>
+                <div className="mb-3">
+                  <label className="form-label">Nombre</label>
                   <input
                     type="text"
                     className="form-control"
@@ -165,10 +159,8 @@ const LocationsPage = () => {
                     }
                   />
                 </div>
-                <div className="mb-3 text-start">
-                  <label className="form-label" style={{ color: "#61dafb" }}>
-                    Descripción
-                  </label>
+                <div className="mb-3">
+                  <label className="form-label">Descripción</label>
                   <textarea
                     className="form-control"
                     value={newLocation.description}
@@ -180,18 +172,16 @@ const LocationsPage = () => {
                     }
                   ></textarea>
                 </div>
-                <div className="mb-3 text-start">
-                  <label className="form-label" style={{ color: "#61dafb" }}>
-                    Piso
-                  </label>
+                <div className="mb-3">
+                  <label className="form-label">Piso</label>
                   <input
                     type="number"
                     className="form-control"
-                    value={newLocation.piso || ""}
+                    value={newLocation.piso}
                     onChange={(e) =>
                       setNewLocation({
                         ...newLocation,
-                        piso: e.target.value ? parseInt(e.target.value) : null,
+                        piso: e.target.value,
                       })
                     }
                   />
@@ -204,10 +194,7 @@ const LocationsPage = () => {
                 >
                   Cerrar
                 </button>
-                <button
-                  className="btn btn-primary"
-                  onClick={handleAddLocation}
-                >
+                <button className="btn btn-primary" onClick={handleAddLocation}>
                   Guardar
                 </button>
               </div>
@@ -218,93 +205,81 @@ const LocationsPage = () => {
 
       {/* Modal para editar locación */}
       {showEditModal && (
-      <div className="modal show d-block" tabIndex="-1">
-        <div className="modal-dialog">
-          <div
-            className="modal-content"
-            style={{
-              backgroundColor: "#2b2f38", // Fondo consistente con la página
-              color: "white", // Color del texto
-            }}
-          >
-            <div className="modal-header">
-              <h5 className="modal-title" style={{ color: "#61dafb" }}>
-                Editar Locación
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                style={{ color: "white" }}
-                onClick={() => setShowEditModal(false)}
-              ></button>
-            </div>
-            <div className="modal-body">
-              <div className="mb-3 text-start">
-                <label className="form-label" style={{ color: "#61dafb" }}>
-                  Nombre
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={editLocation.name}
-                  onChange={(e) =>
-                    setEditLocation({ ...editLocation, name: e.target.value })
-                  }
-                />
+        <div className="modal show d-block" tabIndex="-1">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Editar Locación</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowEditModal(false)}
+                ></button>
               </div>
-              <div className="mb-3 text-start">
-                <label className="form-label" style={{ color: "#61dafb" }}>
-                  Descripción
-                </label>
-                <textarea
-                  className="form-control"
-                  value={editLocation.description}
-                  onChange={(e) =>
-                    setEditLocation({
-                      ...editLocation,
-                      description: e.target.value,
-                    })
-                  }
-                ></textarea>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label className="form-label">Nombre</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={editLocation.name || ""}
+                    onChange={(e) =>
+                      setEditLocation({ ...editLocation, name: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Descripción</label>
+                  <textarea
+                    className="form-control"
+                    value={editLocation.description || ""}
+                    onChange={(e) =>
+                      setEditLocation({
+                        ...editLocation,
+                        description: e.target.value,
+                      })
+                    }
+                  ></textarea>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Piso</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={editLocation.piso || ""}
+                    onChange={(e) =>
+                      setEditLocation({
+                        ...editLocation,
+                        piso: e.target.value,
+                      })
+                    }
+                  />
+                </div>
               </div>
-              <div className="mb-3 text-start">
-                <label className="form-label" style={{ color: "#61dafb" }}>
-                  Piso
-                </label>
-                <input
-                  type="number"
-                  className="form-control"
-                  value={editLocation.piso || ""}
-                  onChange={(e) =>
-                    setEditLocation({
-                      ...editLocation,
-                      piso: e.target.value ? parseInt(e.target.value) : null,
-                    })
-                  }
-                />
+              <div className="modal-footer">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowEditModal(false)}
+                >
+                  Cerrar
+                </button>
+                <button
+                  className="btn btn-primary"
+                  onClick={handleEditLocation}
+                >
+                  Guardar Cambios
+                </button>
               </div>
-            </div>
-            <div className="modal-footer">
-              <button
-                className="btn btn-secondary"
-                onClick={() => setShowEditModal(false)}
-              >
-                Cerrar
-              </button>
-              <button
-                className="btn btn-primary"
-                onClick={handleEditLocation}
-              >
-                Guardar Cambios
-              </button>
             </div>
           </div>
         </div>
-      </div>
-    )}
-
+      )}
     </div>
   );
 };
 
 export default LocationsPage;
+
+
+
+

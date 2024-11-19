@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 import sequelize from './index.js';
 
-const Asset = sequelize.define('Asset', {
+export const Asset = sequelize.define('Asset', {
   id: {
     type: DataTypes.BIGINT,
     primaryKey: true,
@@ -41,7 +41,7 @@ const Asset = sequelize.define('Asset', {
   },
   status: {
     type: DataTypes.BOOLEAN,
-    defaultValue: true, // Activo por defecto
+    defaultValue: true,
   },
   location_id: {
     type: DataTypes.BIGINT,
@@ -50,6 +50,8 @@ const Asset = sequelize.define('Asset', {
       key: 'id',
     },
   },
+}, {
+  tableName: 'assets',
+  timestamps: false, // Desactiva createdAt y updatedAt
 });
 
-export default Asset;

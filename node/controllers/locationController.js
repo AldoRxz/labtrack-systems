@@ -1,5 +1,5 @@
-import Location from '../models/Location.js';
-import Asset from '../models/Asset.js';
+import {Location} from '../models/Location.js';
+import { Asset } from '../models/Asset.js';
 
 export const getAllLocations = async (req, res) => {
     try {
@@ -25,13 +25,7 @@ export const getLocationById = async (req, res) => {
             include: [
                 {
                     model: Asset, 
-                    as: 'Assets',
-                    include: [
-                        {
-                            model: AssetStatus,
-                            as: 'Status'
-                        }
-                    ]
+                    as: 'assets',
                 },
             ],
         });

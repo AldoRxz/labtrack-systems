@@ -1,4 +1,4 @@
-import Asset from '../models/Asset.js';
+import {Asset} from '../models/Asset.js';
 
 // Obtener todos los activos
 export const getAllAssets = async (req, res) => {
@@ -12,14 +12,17 @@ export const getAllAssets = async (req, res) => {
 
 // Crear un nuevo activo
 export const createAsset = async (req, res) => {
-    const { descripcion, marca, modelo, numero_de_serie, status, location_id } = req.body;
+    const { descripcion, marca, modelo, numero_de_serie, numero_de_activo, cog, resguardante, status, location_id } = req.body;
     try {
       const newAsset = await Asset.create({
         descripcion,
         marca,
         modelo,
         numero_de_serie,
-        status, 
+        numero_de_activo,
+        cog,
+        resguardante,
+        status,
         location_id,
       });
       res.status(201).json(newAsset);
@@ -44,25 +47,40 @@ export const getAssetById = async (req, res) => {
 
 // Actualizar un activo por ID
 export const updateAsset = async (req, res) => {
-    const { id } = req.params;
-    const { descripcion, marca, modelo, numero_de_serie, status, location_id } = req.body;
-    try {
-      const asset = await Asset.findByPk(id);
-      if (!asset) return res.status(404).json({ error: 'Equipo no encontrado' });
-  
-      await asset.update({
-        descripcion,
-        marca,
-        modelo,
-        numero_de_serie,
-        status, // Actualización del estado
-        location_id,
-      });
-      res.status(200).json(asset);
-    } catch (error) {
-      res.status(500).json({ error: 'Error al actualizar el equipo' });
+  const {
+    descripcion,
+    marca,
+    modelo,
+    numero_de_serie,
+    numero_de_activo,
+    cog,
+    resguardante,
+    status,
+  } = req.body;
+
+  try {
+    const asset = await Asset.findByPk(req.params.id);
+    if (!asset) {
+      return res.status(404).json({ message: "Equipo no encontrado" });
     }
-  };
+
+    await asset.update({
+      descripcion,
+      marca,
+      modelo,
+      numero_de_serie,
+      numero_de_activo,
+      cog,
+      resguardante,
+      status,
+    });
+
+    res.status(200).json(asset);
+  } catch (error) {
+    console.error("Error al actualizar el equipo:", error); // Log detallado del error
+    res.status(500).json({ error: "Error al actualizar el equipo" });
+  }
+};
 
 // Eliminar un activo por ID
 export const deleteAsset = async (req, res) => {

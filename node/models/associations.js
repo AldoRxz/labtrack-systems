@@ -1,6 +1,5 @@
-import Location from './Location.js';
-import Asset from './Asset.js';
+import { Asset } from './Asset.js'; // Importación con nombre
+import { Location } from './Location.js';
 
-// Relación entre location y Asset
-Location.hasMany(Asset, { foreignKey: 'location_id', as: 'Assets' });
-Asset.belongsTo(Location, { foreignKey: 'location_id' });
+Location.hasMany(Asset, { foreignKey: 'location_id', as: 'assets' });
+Asset.belongsTo(Location, { foreignKey: 'location_id', as: 'location' });
