@@ -86,3 +86,17 @@ a {
   color: black; /* Cambia el color del texto a negro */
 }
 
+.modal-title {
+  font-size: 1.5rem; /* Tamaño adecuado para el título */
+  color: #000; /* Color negro */
+}
+
+.modal-body label {
+  font-weight: bold; /* Negrita en las etiquetas */
+  color: #000; /* Color negro */
+}
+
+.modal-body input,
+.modal-body textarea {
+  color: #000; /* Texto en negro dentro de los inputs */
+}

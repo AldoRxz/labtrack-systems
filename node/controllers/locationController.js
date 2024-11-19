@@ -1,6 +1,5 @@
 import Location from '../models/Location.js';
 import Asset from '../models/Asset.js';
-import AssetStatus from '../models/AssetStatus.js'; 
 
 export const getAllLocations = async (req, res) => {
     try {

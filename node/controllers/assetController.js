@@ -12,13 +12,21 @@ export const getAllAssets = async (req, res) => {
 
 // Crear un nuevo activo
 export const createAsset = async (req, res) => {
+    const { descripcion, marca, modelo, numero_de_serie, status, location_id } = req.body;
     try {
-        const asset = await Asset.create(req.body);
-        res.status(201).json(asset);
+      const newAsset = await Asset.create({
+        descripcion,
+        marca,
+        modelo,
+        numero_de_serie,
+        status, 
+        location_id,
+      });
+      res.status(201).json(newAsset);
     } catch (error) {
-        res.status(500).json({ error: 'Error al crear el activo' });
+      res.status(500).json({ error: 'Error al crear el equipo' });
     }
-};
+  };
 
 // Obtener un activo por ID
 export const getAssetById = async (req, res) => {
@@ -36,18 +44,25 @@ export const getAssetById = async (req, res) => {
 
 // Actualizar un activo por ID
 export const updateAsset = async (req, res) => {
+    const { id } = req.params;
+    const { descripcion, marca, modelo, numero_de_serie, status, location_id } = req.body;
     try {
-        const asset = await Asset.findByPk(req.params.id);
-        if (asset) {
-            await asset.update(req.body);
-            res.json(asset);
-        } else {
-            res.status(404).json({ error: 'Activo no encontrado' });
-        }
+      const asset = await Asset.findByPk(id);
+      if (!asset) return res.status(404).json({ error: 'Equipo no encontrado' });
+  
+      await asset.update({
+        descripcion,
+        marca,
+        modelo,
+        numero_de_serie,
+        status, // Actualización del estado
+        location_id,
+      });
+      res.status(200).json(asset);
     } catch (error) {
-        res.status(500).json({ error: 'Error al actualizar el activo' });
+      res.status(500).json({ error: 'Error al actualizar el equipo' });
     }
-};
+  };
 
 // Eliminar un activo por ID
 export const deleteAsset = async (req, res) => {
