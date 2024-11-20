@@ -1,4 +1,4 @@
-import ObservationHistory from '../models/ObservationHistory.js';
+import {ObservationHistory} from '../models/ObservationHistory.js';
 
 export const getAllObservationHistory = async (req, res) => {
     try {

@@ -1,18 +1,22 @@
 import { DataTypes } from 'sequelize';
 import sequelize from './index.js';
 
-const ObservationHistory = sequelize.define('ObservationHistory', {
+export const ObservationHistory = sequelize.define('ObservationHistory', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
     asset_id: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
     observation: {
-        type: DataTypes.TEXT,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     observed_at: {
         type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
         allowNull: false,
     },
     observed_by: {
@@ -21,7 +25,5 @@ const ObservationHistory = sequelize.define('ObservationHistory', {
     },
 }, {
     tableName: 'observation_history',
-    timestamps: false,
+    timestamps: false, // Desactiva los timestamps
 });
-
-export default ObservationHistory;

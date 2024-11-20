@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "../axios/axiosConfig";
 
-import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+import {
+  Box,
+  SwipeableDrawer,
+  Typography,
+  Button,
+} from "@mui/material";
 
 const LocationDetails = () => {
   const { id } = useParams();
@@ -13,10 +15,6 @@ const LocationDetails = () => {
   const [showAddModal, setShowAddModal] = useState(false); // Modal para agregar equipo
   const [showEditModal, setShowEditModal] = useState(false); // Modal para editar equipo
   
-  const [selectedAsset, setSelectedAsset] = useState(null); // Equipo seleccionado para editar
-  const [drawerOpen, setDrawerOpen] = useState(false); // Estado para el SwipeableDrawer
-
-
   const [newAsset, setNewAsset] = useState({
     descripcion: "",
     marca: "",
@@ -26,6 +24,18 @@ const LocationDetails = () => {
     resguardante: "",
     status: true,
   });
+
+  const [selectedAsset, setSelectedAsset] = useState(null); // Equipo seleccionado para editar
+  const [drawerOpen, setDrawerOpen] = useState(false); // Estado para el SwipeableDrawer
+  
+  const [observationsDrawerOpen, setObservationsDrawerOpen] = useState(false); // Estado para el SwipeableDrawer de observaciones
+  const [observations, setObservations] = useState([]);
+  const [showAddObservation, setShowAddObservation] = useState(false);
+  const [newObservation, setNewObservation] = useState({
+    observation: "",
+    observed_by: "",
+  });
+
 
   useEffect(() => {
     const fetchLocationDetails = async () => {
@@ -138,6 +148,58 @@ const LocationDetails = () => {
     setDrawerOpen(false);
     setSelectedAsset(null);
   };
+
+  const handleOpenObservations = async (assetId) => {
+    try {
+      const response = await axios.get(`/observation-history/${assetId}`);
+      setObservations(response.data ? [response.data] : []);
+      setObservationsDrawerOpen(true);
+    } catch (error) {
+      console.error("Error fetching observations:", error);
+    }
+  };
+
+  const handleCloseObservations = () => {
+    setObservationsDrawerOpen(false);
+    setObservations([]);
+  };
+
+  const handleSaveObservation = async () => {
+    try {
+      if (!selectedAsset || !selectedAsset.id) {
+        alert("Por favor selecciona un equipo antes de guardar una observación.");
+        return;
+      }
+  
+      const payload = {
+        asset_id: selectedAsset.id,
+        observation: newObservation.observation,
+        observed_by: newObservation.observed_by,
+      };
+  
+      console.log("Payload enviado:", payload);
+  
+      const response = await axios.post(
+        "http://localhost:3000/api/observation-history",
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      console.log("Respuesta del backend:", response.data);
+  
+      setObservations((prev) => [...prev, response.data]);
+      setNewObservation({ observation: "", observed_by: "" });
+      alert("Observación guardada correctamente.");
+    } catch (error) {
+      console.error("Error al guardar la observación:", error);
+      alert("No se pudo guardar la observación. Verifica los datos o el servidor.");
+    }
+  };
+  
 
   if (!location) {
     return <p className="text-center mt-4">Cargando detalles de la locación...</p>;
@@ -273,7 +335,7 @@ const LocationDetails = () => {
                 <td>
                   <button
                     className="btn btn-secondary btn-sm"
-                    onClick={() => alert("Abrir modal para observaciones")}
+                    onClick={() => handleOpenObservations(asset.id)}
                   >
                     <i class="fa-regular fa-eye"></i>
                   </button>
@@ -681,6 +743,156 @@ const LocationDetails = () => {
         </Box>
       </SwipeableDrawer>
 
+
+       {/* SwipeableDrawer para las observaciones */}
+       <SwipeableDrawer
+          anchor="right"
+          open={observationsDrawerOpen}
+          onClose={handleCloseObservations}
+        >
+          <Box
+            sx={{
+              width: 400,
+              p: 3,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between", // Para distribuir contenido y botón de cerrar
+              height: "100%",
+              bgcolor: "#2b2f38",
+              color: "#ffffff",
+            }}
+          >
+            <Box>
+              <Typography variant="h5" sx={{ mb: 3, color: "#61dafb" }}>
+                Observaciones del Equipo
+              </Typography>
+
+              <Button
+                variant="contained"
+                sx={{
+                  mb: 3,
+                  bgcolor: "#61dafb",
+                  color: "#000",
+                  fontWeight: "bold",
+                }}
+                onClick={() => setShowAddObservation(true)}
+              >
+                Agregar Nueva Observación
+              </Button>
+
+              {showAddObservation && (
+                <Box
+                  sx={{
+                    mb: 3,
+                    p: 2,
+                    border: "1px solid #61dafb",
+                    borderRadius: "8px",
+                    bgcolor: "#29293d",
+                  }}
+                >
+                  <Typography variant="body1" sx={{ mb: 2, color: "#61dafb" }}>
+                    Nueva Observación
+                  </Typography>
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="body2" sx={{ color: "#ffffff" }}>
+                      Observación:
+                    </Typography>
+                    <textarea
+                      rows="4"
+                      style={{
+                        width: "100%",
+                        background: "#1e1e2f",
+                        color: "#ffffff",
+                        border: "1px solid #61dafb",
+                        borderRadius: "5px",
+                        padding: "10px",
+                      }}
+                      onChange={(e) =>
+                        setNewObservation({ ...newObservation, observation: e.target.value })
+                      }
+                      value={newObservation.observation || ""}
+                    />
+                  </Box>
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="body2" sx={{ color: "#ffffff" }}>
+                      Observado por:
+                    </Typography>
+                    <input
+                      type="text"
+                      style={{
+                        width: "100%",
+                        background: "#1e1e2f",
+                        color: "#ffffff",
+                        border: "1px solid #61dafb",
+                        borderRadius: "5px",
+                        padding: "10px",
+                      }}
+                      onChange={(e) =>
+                        setNewObservation({ ...newObservation, observed_by: e.target.value })
+                      }
+                      value={newObservation.observed_by || ""}
+                    />
+                  </Box>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      bgcolor: "#61dafb",
+                      color: "#000",
+                      fontWeight: "bold",
+                      ":hover": {
+                        bgcolor: "#50b5e8",
+                      },
+                    }}
+                    onClick={handleSaveObservation}
+                  >
+                    Guardar Observación
+                  </Button>
+                </Box>
+              )}
+
+              {observations.length > 0 ? (
+                observations.map((obs) => (
+                  <Box
+                    key={obs.id}
+                    sx={{
+                      mb: 2,
+                      p: 2,
+                      border: "1px solid #61dafb",
+                      borderRadius: "8px",
+                      bgcolor: "#29293d",
+                    }}
+                  >
+                    <Typography variant="body1" sx={{ mb: 1 }}>
+                      <strong>Observación:</strong> {obs.observation}
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 1 }}>
+                      <strong>Fecha:</strong>{" "}
+                      {new Date(obs.observed_at).toLocaleString()}
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 1 }}>
+                      <strong>Observado por:</strong> {obs.observed_by}
+                    </Typography>
+                  </Box>
+                ))
+              ) : (
+                <Typography>No hay observaciones disponibles</Typography>
+              )}
+            </Box>
+
+            <Button
+              variant="contained"
+              sx={{
+                mt: 2,
+                bgcolor: "#61dafb",
+                color: "#000",
+                fontWeight: "bold",
+              }}
+              onClick={handleCloseObservations}
+            >
+              Cerrar
+            </Button>
+          </Box>
+        </SwipeableDrawer>
 
 
     </div>

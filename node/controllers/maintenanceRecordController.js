@@ -1,4 +1,4 @@
-import MaintenanceRecord from '../models/MaintenanceRecord.js';
+import { MaintenanceRecord } from '../models/MaintenanceRecord.js';
 
 export const getAllMaintenanceRecords = async (req, res) => {
     try {

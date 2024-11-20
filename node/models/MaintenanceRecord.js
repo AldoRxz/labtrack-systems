@@ -1,32 +1,38 @@
 import { DataTypes } from 'sequelize';
 import sequelize from './index.js';
 
-const MaintenanceRecord = sequelize.define('MaintenanceRecord', {
-    asset_id: {
-        type: DataTypes.BIGINT,
-        allowNull: false,
-    },
-    maintenance_date: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-        allowNull: false,
-    },
-    description: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-    },
-    cost: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: true,
-    },
-    performed_by: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-}, {
-    tableName: 'maintenance_records',
-    timestamps: false,
-});
 
-// Exportar el modelo como default
-export default MaintenanceRecord;
+export const MaintenanceRecord = sequelize.define(
+    'MaintenanceRecord',
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+        },
+        asset_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        maintenance_date: {
+            type: DataTypes.DATE,
+            allowNull: false,
+        },
+        description: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        cost: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+        },
+        performed_by: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+    },
+    {
+        tableName: 'maintenance_records', // Nombre exacto de la tabla
+        timestamps: false, // No hay columnas createdAt y updatedAt
+    }
+);

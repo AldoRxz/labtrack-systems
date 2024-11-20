@@ -1,4 +1,6 @@
 import {Asset} from '../models/Asset.js';
+import { ObservationHistory } from '../models/ObservationHistory.js';
+import { MaintenanceRecord } from '../models/MaintenanceRecord.js';
 
 // Obtener todos los activos
 export const getAllAssets = async (req, res) => {
@@ -32,16 +34,29 @@ export const createAsset = async (req, res) => {
     }
   };
 
-// Obtener un activo por ID
-export const getAssetById = async (req, res) => {
+  export const getAssetById = async (req, res) => {
     try {
-        const asset = await Asset.findByPk(req.params.id);
-        if (asset) {
-            res.json(asset);
-        } else {
-            res.status(404).json({ error: 'Activo no encontrado' });
+        const asset = await Asset.findOne({
+            where: { id: req.params.id },
+            include: [
+                {
+                    model: ObservationHistory,
+                    as: 'observations', // Alias definido en las asociaciones
+                },
+                {
+                    model: MaintenanceRecord,
+                    as: 'maintenances', // Alias definido en las asociaciones
+                },
+            ],
+        });
+
+        if (!asset) {
+            return res.status(404).json({ error: 'Activo no encontrado' });
         }
+
+        res.json(asset);
     } catch (error) {
+        console.error('Error al obtener el activo:', error);
         res.status(500).json({ error: 'Error al obtener el activo' });
     }
 };
@@ -85,18 +100,33 @@ export const updateAsset = async (req, res) => {
   }
 };
 
-// Eliminar un activo por ID
+
+// Eliminar un activo por ID junto con relaciones
 export const deleteAsset = async (req, res) => {
-    try {
-        const asset = await Asset.findByPk(req.params.id);
-        if (asset) {
-            await asset.destroy();
-            res.json({ message: 'Activo eliminado' });
-        } else {
-            res.status(404).json({ error: 'Activo no encontrado' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: 'Error al eliminar el activo' });
-    }
+  try {
+      const asset = await Asset.findByPk(req.params.id, {
+          include: [
+              { association: 'observations' },
+              { association: 'maintenances' }
+          ]
+      });
+
+      if (asset) {
+          // Elimina observaciones y mantenimientos relacionados primero
+          await Promise.all([
+              ...asset.observations.map(observation => observation.destroy()),
+              ...asset.maintenances.map(maintenance => maintenance.destroy())
+          ]);
+
+          // Luego elimina el activo
+          await asset.destroy();
+          res.json({ message: 'Activo y relaciones eliminados' });
+      } else {
+          res.status(404).json({ error: 'Activo no encontrado' });
+      }
+  } catch (error) {
+      console.error("Error al eliminar el activo:", error);
+      res.status(500).json({ error: 'Error al eliminar el activo' });
+  }
 };
 
