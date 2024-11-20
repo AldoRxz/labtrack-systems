@@ -98,6 +98,30 @@ const LocationsPage = () => {
         .map((piso) => (
           <div key={piso} className="mb-5">
             <h2 className="text-center">Piso {piso}</h2>
+
+            {/* Mostrar imagen según el piso */}
+            {piso == 1 && (
+              <div className="text-center">
+                <img
+                  src="/planta_baja.png"
+                  alt="Planta Baja"
+                  className="img-fluid mb-4"
+                  style={{ maxWidth: "600px", height: "auto" }} // Cambia el tamaño de la imagen
+                />
+              </div>
+            )}
+            {piso == 2 && (
+              <div className="text-center">
+                <img
+                  src="/planta_alta.png"
+                  alt="Planta Alta"
+                  className="img-fluid mb-4"
+                  style={{ maxWidth: "600px", height: "auto" }} // Cambia el tamaño de la imagen
+                />
+              </div>
+            )}
+
+            {/* Tabla de locaciones del piso */}
             <table className="table table-dark table-hover">
               <thead>
                 <tr>
@@ -287,5 +311,3 @@ const LocationsPage = () => {
 };
 
 export default LocationsPage;
-
-
