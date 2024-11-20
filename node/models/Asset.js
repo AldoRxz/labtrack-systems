@@ -12,46 +12,46 @@ export const Asset = sequelize.define('Asset', {
     allowNull: false,
   },
   marca: {
-    type: DataTypes.TEXT,
+    type: DataTypes.STRING,
     allowNull: true,
   },
   modelo: {
-    type: DataTypes.TEXT,
+    type: DataTypes.STRING,
     allowNull: true,
   },
   numero_de_serie: {
-    type: DataTypes.TEXT,
+    type: DataTypes.STRING,
     allowNull: true,
   },
   numero_de_activo: {
-    type: DataTypes.TEXT,
+    type: DataTypes.STRING,
     allowNull: true,
   },
   cog: {
-    type: DataTypes.TEXT,
+    type: DataTypes.STRING,
     allowNull: true,
   },
   resguardante: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-  },
-  observaciones: {
-    type: DataTypes.TEXT,
+    type: DataTypes.STRING,
     allowNull: true,
   },
   status: {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
   },
+  icon: { // Campo nuevo
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   location_id: {
     type: DataTypes.BIGINT,
     references: {
-      model: 'Locations',
+      model: 'locations',
       key: 'id',
     },
   },
 }, {
   tableName: 'assets',
-  timestamps: false, // Desactiva createdAt y updatedAt
+  timestamps: false,
 });
 

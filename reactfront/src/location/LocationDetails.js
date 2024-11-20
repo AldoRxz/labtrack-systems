@@ -129,6 +129,61 @@ const LocationDetails = () => {
       <h1 className="text-center">{location.name}</h1>
       <p className="text-center">{location.description}</p>
 
+      <div className="container mt-4">
+        <h2 className="mb-4" style={{ color: "#61dafb" }}>Significado de los Iconos</h2>
+        <div className="d-flex flex-wrap justify-content-start text-center" style={{ gap: "2rem" }}>
+          <div>
+            <i className="fa-solid fa-display fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Monitor</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-computer fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Computadora All-in</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-phone fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Teléfono</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-mattress-pillow fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Cortina</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-bolt fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Regulador de Voltaje</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-laptop fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Laptop</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-print fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Impresora</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-chalkboard-user fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Pizarrón Proyector</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-tv fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Televisión</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-fingerprint fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Reloj Checador</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-volume-high fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Bocina</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-house-signal fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Modem Wifi</p>
+          </div>
+        </div>
+      </div>
+
+
       <div className="d-flex justify-content-between align-items-center my-4">
         <h2>Equipos</h2>
         <button
@@ -141,53 +196,54 @@ const LocationDetails = () => {
 
       {location.assets && location.assets.length > 0 ? (
         <table className="table table-dark table-hover">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Descripción</th>
-              <th>Marca</th>
-              <th>Modelo</th>
-              <th>Resguardante</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {location.assets.map((asset) => (
-              <tr key={asset.id}>
-                <td>{asset.id}</td>
-                <td>{asset.descripcion}</td>
-                <td>{asset.marca}</td>
-                <td>{asset.modelo}</td>
-                <td>{asset.resguardante}</td>
-                <td
-                  className={`fw-bold ${
-                    asset.status ? "text-primary" : "text-danger"
-                  }`}
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Tipo</th> {/* Actualización para mostrar el ícono */}
+            <th>Descripción</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>Resguardante</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {location.assets.map((asset) => (
+            <tr key={asset.id}>
+              <td>{asset.id}</td>
+              <td>
+                <i className={`fa-solid ${asset.icon} fa-2x`} style={{ color: "#61dafb" }}></i>
+              </td> {/* Se muestra el ícono aquí */}
+              <td>{asset.descripcion}</td>
+              <td>{asset.marca}</td>
+              <td>{asset.modelo}</td>
+              <td>{asset.resguardante}</td>
+              <td style={{ color: asset.status ? "blue" : "red" }}>
+                {asset.status ? "Activo" : "Inactivo"}
+              </td>
+              <td>
+                <button
+                  className="btn btn-warning btn-sm me-2"
+                  onClick={() => {
+                    setSelectedAsset(asset);
+                    setShowEditModal(true);
+                  }}
                 >
-                  {asset.status ? "Activo" : "Inactivo"}
-                </td>
-                <td>
-                  <button
-                    className="btn btn-warning btn-sm me-2"
-                    onClick={() => {
-                      setSelectedAsset(asset);
-                      setShowEditModal(true);
-                    }}
-                  >
-                    <i className="fa-solid fa-pen-to-square"></i>
-                  </button>
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => handleDeleteAsset(asset.id)}
-                  >
-                    <i className="fa-solid fa-trash"></i>
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  <i className="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button
+                  className="btn btn-danger btn-sm"
+                  onClick={() => handleDeleteAsset(asset.id)}
+                >
+                  <i className="fa-solid fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      
       ) : (
         <p>No hay equipos en esta locación.</p>
       )}
@@ -213,8 +269,7 @@ const LocationDetails = () => {
                 ></button>
               </div>
               <div className="modal-body">
-                {/* Campos del formulario */}
-                <div className="mb-3">
+                <div className="mb-3 text-start">
                   <label className="form-label" style={{ color: "#61dafb" }}>Descripción</label>
                   <input
                     type="text"
@@ -223,7 +278,7 @@ const LocationDetails = () => {
                     onChange={(e) => setNewAsset({ ...newAsset, descripcion: e.target.value })}
                   />
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 text-start">
                   <label className="form-label" style={{ color: "#61dafb" }}>Marca</label>
                   <input
                     type="text"
@@ -232,7 +287,7 @@ const LocationDetails = () => {
                     onChange={(e) => setNewAsset({ ...newAsset, marca: e.target.value })}
                   />
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 text-start">
                   <label className="form-label" style={{ color: "#61dafb" }}>Modelo</label>
                   <input
                     type="text"
@@ -241,7 +296,7 @@ const LocationDetails = () => {
                     onChange={(e) => setNewAsset({ ...newAsset, modelo: e.target.value })}
                   />
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 text-start">
                   <label className="form-label" style={{ color: "#61dafb" }}>Número de Serie</label>
                   <input
                     type="text"
@@ -250,7 +305,7 @@ const LocationDetails = () => {
                     onChange={(e) => setNewAsset({ ...newAsset, numero_de_serie: e.target.value })}
                   />
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 text-start">
                   <label className="form-label" style={{ color: "#61dafb" }}>Número de Activo</label>
                   <input
                     type="text"
@@ -259,8 +314,8 @@ const LocationDetails = () => {
                     onChange={(e) => setNewAsset({ ...newAsset, numero_de_activo: e.target.value })}
                   />
                 </div>
-                <div className="mb-3">
-                  <label className="form-label" style={{ color: "#61dafb" }}>COG</label> {/* Nuevo campo */}
+                <div className="mb-3 text-start">
+                  <label className="form-label" style={{ color: "#61dafb" }}>COG</label>
                   <input
                     type="text"
                     className="form-control"
@@ -268,7 +323,7 @@ const LocationDetails = () => {
                     onChange={(e) => setNewAsset({ ...newAsset, cog: e.target.value })}
                   />
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 text-start">
                   <label className="form-label" style={{ color: "#61dafb" }}>Resguardante</label>
                   <input
                     type="text"
@@ -277,7 +332,7 @@ const LocationDetails = () => {
                     onChange={(e) => setNewAsset({ ...newAsset, resguardante: e.target.value })}
                   />
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 text-start">
                   <label className="form-label" style={{ color: "#61dafb" }}>Estado</label>
                   <select
                     className="form-control"
@@ -286,6 +341,28 @@ const LocationDetails = () => {
                   >
                     <option value="true">Activo</option>
                     <option value="false">Inactivo</option>
+                  </select>
+                </div>
+                <div className="mb-3 text-start">
+                  <label className="form-label" style={{ color: "#61dafb" }}>Tipo (Ícono)</label>
+                  <select
+                    className="form-control"
+                    value={newAsset.icon}
+                    onChange={(e) => setNewAsset({ ...newAsset, icon: e.target.value })}
+                  >
+                    <option value="">Selecciona un tipo</option>
+                    <option value="fa-display">Monitor</option>
+                    <option value="fa-computer">Computadora All-in</option>
+                    <option value="fa-phone">Teléfono</option>
+                    <option value="fa-mattress-pillow">Cortina</option>
+                    <option value="fa-bolt">Regulador de Voltaje</option>
+                    <option value="fa-laptop">Laptop</option>
+                    <option value="fa-print">Impresora</option>
+                    <option value="fa-chalkboard-user">Pizarrón Proyector</option>
+                    <option value="fa-tv">Televisión</option>
+                    <option value="fa-fingerprint">Reloj Checador</option>
+                    <option value="fa-volume-high">Bocina</option>
+                    <option value="fa-house-signal">Modem Wifi</option>
                   </select>
                 </div>
               </div>
@@ -326,7 +403,7 @@ const LocationDetails = () => {
                 ></button>
               </div>
               <div className="modal-body">
-                <div className="mb-3">
+                <div className="mb-3 text-start">
                   <label className="form-label" style={{ color: "#61dafb" }}>Descripción</label>
                   <input
                     type="text"
@@ -337,7 +414,7 @@ const LocationDetails = () => {
                     }
                   />
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 text-start">
                   <label className="form-label" style={{ color: "#61dafb" }}>Marca</label>
                   <input
                     type="text"
@@ -348,7 +425,7 @@ const LocationDetails = () => {
                     }
                   />
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 text-start">
                   <label className="form-label" style={{ color: "#61dafb" }}>Modelo</label>
                   <input
                     type="text"
@@ -359,7 +436,7 @@ const LocationDetails = () => {
                     }
                   />
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 text-start">
                   <label className="form-label" style={{ color: "#61dafb" }}>Número de Serie</label>
                   <input
                     type="text"
@@ -370,7 +447,7 @@ const LocationDetails = () => {
                     }
                   />
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 text-start">
                   <label className="form-label" style={{ color: "#61dafb" }}>Número de Activo</label>
                   <input
                     type="text"
@@ -381,8 +458,8 @@ const LocationDetails = () => {
                     }
                   />
                 </div>
-                <div className="mb-3">
-                  <label className="form-label" style={{ color: "#61dafb" }}>COG</label> {/* Nuevo campo */}
+                <div className="mb-3 text-start">
+                  <label className="form-label" style={{ color: "#61dafb" }}>COG</label>
                   <input
                     type="text"
                     className="form-control"
@@ -392,7 +469,7 @@ const LocationDetails = () => {
                     }
                   />
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 text-start">
                   <label className="form-label" style={{ color: "#61dafb" }}>Resguardante</label>
                   <input
                     type="text"
@@ -403,7 +480,7 @@ const LocationDetails = () => {
                     }
                   />
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 text-start">
                   <label className="form-label" style={{ color: "#61dafb" }}>Estado</label>
                   <select
                     className="form-control"
@@ -414,6 +491,28 @@ const LocationDetails = () => {
                   >
                     <option value="true">Activo</option>
                     <option value="false">Inactivo</option>
+                  </select>
+                </div>
+                <div className="mb-3 text-start">
+                  <label className="form-label" style={{ color: "#61dafb" }}>Tipo (Ícono)</label>
+                  <select
+                    className="form-control"
+                    value={selectedAsset.icon}
+                    onChange={(e) => setSelectedAsset({ ...selectedAsset, icon: e.target.value })}
+                  >
+                    <option value="">Selecciona un tipo</option>
+                    <option value="fa-display">Monitor</option>
+                    <option value="fa-computer">Computadora All-in</option>
+                    <option value="fa-phone">Teléfono</option>
+                    <option value="fa-mattress-pillow">Cortina</option>
+                    <option value="fa-bolt">Regulador de Voltaje</option>
+                    <option value="fa-laptop">Laptop</option>
+                    <option value="fa-print">Impresora</option>
+                    <option value="fa-chalkboard-user">Pizarrón Proyector</option>
+                    <option value="fa-tv">Televisión</option>
+                    <option value="fa-fingerprint">Reloj Checador</option>
+                    <option value="fa-volume-high">Bocina</option>
+                    <option value="fa-house-signal">Modem Wifi</option>
                   </select>
                 </div>
               </div>

@@ -12,7 +12,7 @@ export const getAllAssets = async (req, res) => {
 
 // Crear un nuevo activo
 export const createAsset = async (req, res) => {
-    const { descripcion, marca, modelo, numero_de_serie, numero_de_activo, cog, resguardante, status, location_id } = req.body;
+    const { descripcion, marca, modelo, numero_de_serie, numero_de_activo, cog, resguardante, status, icon, location_id } = req.body;
     try {
       const newAsset = await Asset.create({
         descripcion,
@@ -23,6 +23,7 @@ export const createAsset = async (req, res) => {
         cog,
         resguardante,
         status,
+        icon,
         location_id,
       });
       res.status(201).json(newAsset);
@@ -56,6 +57,7 @@ export const updateAsset = async (req, res) => {
     cog,
     resguardante,
     status,
+    icon, 
   } = req.body;
 
   try {
@@ -73,6 +75,7 @@ export const updateAsset = async (req, res) => {
       cog,
       resguardante,
       status,
+      icon, 
     });
 
     res.status(200).json(asset);
@@ -96,3 +99,4 @@ export const deleteAsset = async (req, res) => {
         res.status(500).json({ error: 'Error al eliminar el activo' });
     }
 };
+

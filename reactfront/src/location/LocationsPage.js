@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "../axios/axiosConfig";
-
 import { useNavigate } from "react-router-dom";
-
 
 const LocationsPage = () => {
   const [locations, setLocations] = useState([]);
@@ -16,12 +14,10 @@ const LocationsPage = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  // Fetch locations when the component mounts
   useEffect(() => {
     fetchLocations();
   }, []);
 
-  // Fetch all locations from the server
   const fetchLocations = async () => {
     try {
       const response = await axios.get("/locations");
@@ -31,7 +27,6 @@ const LocationsPage = () => {
     }
   };
 
-  // Handle adding a new location
   const handleAddLocation = async () => {
     if (!newLocation.name || !newLocation.piso) {
       alert("Por favor, completa todos los campos obligatorios.");
@@ -47,7 +42,6 @@ const LocationsPage = () => {
     }
   };
 
-  // Handle editing an existing location
   const handleEditLocation = async () => {
     if (!editLocation.name || !editLocation.piso) {
       alert("Por favor, completa todos los campos obligatorios.");
@@ -67,7 +61,6 @@ const LocationsPage = () => {
     }
   };
 
-  // Handle deleting a location
   const handleDeleteLocation = async (id) => {
     if (!window.confirm("¿Estás seguro de que deseas eliminar esta locación?")) {
       return;
@@ -80,6 +73,16 @@ const LocationsPage = () => {
     }
   };
 
+  // Agrupar locaciones por piso
+  const groupedLocations = locations.reduce((acc, location) => {
+    const piso = location.piso;
+    if (!acc[piso]) {
+      acc[piso] = [];
+    }
+    acc[piso].push(location);
+    return acc;
+  }, {});
+
   return (
     <div className="container mt-4">
       <h1 className="text-center mb-4">Locaciones</h1>
@@ -90,49 +93,54 @@ const LocationsPage = () => {
         Agregar Locación
       </button>
 
-      <table className="table table-dark table-hover">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Piso</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {locations.map((location) => (
-            <tr key={location.id}>
-              <td
-                style={{ cursor: "pointer", color: "#61dafb" }}
-                onClick={() => navigate(`/locations/${location.id}`)}
-              >
-                {location.name}
-              </td>
-              <td>{location.description}</td>
-              <td>{location.piso}</td>
-              <td>
-                <button
-                  className="btn btn-warning btn-sm me-2"
-                  onClick={() => {
-                    setEditLocation(location);
-                    setShowEditModal(true);
-                  }}
-                >
-                   <i className="fa-solid fa-pen-to-square"></i>
-                </button>
-                <button
-                  className="btn btn-danger btn-sm"
-                  onClick={() => handleDeleteLocation(location.id)}
-                >
-                  <i className="fa-solid fa-trash"></i>
-                </button>
-
-                
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {Object.keys(groupedLocations)
+        .sort((a, b) => a - b) // Ordenar por número de piso
+        .map((piso) => (
+          <div key={piso} className="mb-5">
+            <h2 className="text-center">Piso {piso}</h2>
+            <table className="table table-dark table-hover">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Descripción</th>
+                  <th>Piso</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {groupedLocations[piso].map((location) => (
+                  <tr key={location.id}>
+                    <td
+                      style={{ cursor: "pointer", color: "#61dafb" }}
+                      onClick={() => navigate(`/locations/${location.id}`)}
+                    >
+                      {location.name}
+                    </td>
+                    <td>{location.description}</td>
+                    <td>{location.piso}</td>
+                    <td>
+                      <button
+                        className="btn btn-warning btn-sm me-2"
+                        onClick={() => {
+                          setEditLocation(location);
+                          setShowEditModal(true);
+                        }}
+                      >
+                        <i className="fa-solid fa-pen-to-square"></i>
+                      </button>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleDeleteLocation(location.id)}
+                      >
+                        <i className="fa-solid fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))}
 
       {/* Modal para agregar locación */}
       {showAddModal && (
@@ -279,7 +287,5 @@ const LocationsPage = () => {
 };
 
 export default LocationsPage;
-
-
 
 
