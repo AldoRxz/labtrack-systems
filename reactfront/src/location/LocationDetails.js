@@ -2,12 +2,21 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "../axios/axiosConfig";
 
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+
 const LocationDetails = () => {
   const { id } = useParams();
   const [location, setLocation] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false); // Modal para agregar equipo
   const [showEditModal, setShowEditModal] = useState(false); // Modal para editar equipo
+  
   const [selectedAsset, setSelectedAsset] = useState(null); // Equipo seleccionado para editar
+  const [drawerOpen, setDrawerOpen] = useState(false); // Estado para el SwipeableDrawer
+
+
   const [newAsset, setNewAsset] = useState({
     descripcion: "",
     marca: "",
@@ -120,6 +129,16 @@ const LocationDetails = () => {
     });
   };
 
+  const handleOpenDetails = (asset) => {
+    setSelectedAsset(asset);
+    setDrawerOpen(true);
+  };
+
+  const handleCloseDetails = () => {
+    setDrawerOpen(false);
+    setSelectedAsset(null);
+  };
+
   if (!location) {
     return <p className="text-center mt-4">Cargando detalles de la locación...</p>;
   }
@@ -206,6 +225,9 @@ const LocationDetails = () => {
             <th>Resguardante</th>
             <th>Estado</th>
             <th>Acciones</th>
+            <th>Detalles</th> {/* Nuevo campo */}
+            <th>Observaciones</th> {/* Nuevo campo */}
+            <th>Mantenimientos</th> {/* Nuevo campo */}
           </tr>
         </thead>
         <tbody>
@@ -238,11 +260,37 @@ const LocationDetails = () => {
                 >
                   <i className="fa-solid fa-trash"></i>
                 </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                </td>
+                {/* Nuevo botón "Ver Más Detalles" */}
+                <td>
+                  <button
+                    className="btn btn-info btn-sm"
+                    onClick={() => handleOpenDetails(asset)}                  >
+                    <i class="fa-solid fa-info"></i>
+                  </button>
+                </td>
+                {/* Nuevo botón "Observaciones" */}
+                <td>
+                  <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => alert("Abrir modal para observaciones")}
+                  >
+                    <i class="fa-regular fa-eye"></i>
+                  </button>
+                </td>
+                {/* Nuevo botón "Mantenimientos" */}
+                <td>
+                  <button
+                    className="btn btn-primary btn-sm"
+                    onClick={() => alert("Abrir modal para mantenimientos")}
+                  >
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       
       ) : (
         <p>No hay equipos en esta locación.</p>
@@ -535,8 +583,109 @@ const LocationDetails = () => {
         </div>
       )}
 
+
+      {/* SwipeableDrawer para los detalles */}
+      <SwipeableDrawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={handleCloseDetails}
+        onOpen={() => {}}
+      >
+        <Box
+          sx={{
+            width: 400,
+            p: 3,
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            bgcolor: "#2b2f38", // Fondo oscuro
+            color: "#ffffff", // Texto claro
+          }}
+        >
+          {selectedAsset ? (
+            <div style={{ flex: 1 }}>
+              <Typography
+                variant="h5"
+                sx={{
+                  mb: 3,
+                  color: "#61dafb",
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Detalles del Equipo
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                <strong>ID:</strong> {selectedAsset.id}
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                <strong>Descripción:</strong> {selectedAsset.descripcion}
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                <strong>Marca:</strong> {selectedAsset.marca}
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                <strong>Modelo:</strong> {selectedAsset.modelo}
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                <strong>Número de Serie:</strong> {selectedAsset.numero_de_serie}
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                <strong>Número de Activo:</strong> {selectedAsset.numero_de_activo}
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                <strong>COG:</strong> {selectedAsset.cog}
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                <strong>Resguardante:</strong> {selectedAsset.resguardante}
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                <strong>Estado:</strong>{" "}
+                <span
+                  style={{
+                    color: selectedAsset.status ? "blue" : "red",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {selectedAsset.status ? "Activo" : "Inactivo"}
+                </span>
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                <strong>Icono:</strong>{" "}
+                <i className={`fa-solid ${selectedAsset.icon}`} style={{ color: "#61dafb" }}></i>
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                <strong>Ubicación ID:</strong> {selectedAsset.location_id}
+              </Typography>
+            </div>
+          ) : (
+            <Typography variant="body1">No hay información disponible.</Typography>
+          )}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleCloseDetails}
+            fullWidth
+            sx={{
+              mt: 3,
+              backgroundColor: "#61dafb",
+              color: "#1e1e2f",
+              fontWeight: "bold",
+              ":hover": {
+                backgroundColor: "#50b5e8",
+              },
+            }}
+          >
+            CERRAR
+          </Button>
+        </Box>
+      </SwipeableDrawer>
+
+
+
     </div>
   );
 };
+
 
 export default LocationDetails;
