@@ -100,7 +100,7 @@ const LocationsPage = () => {
             <h2 className="text-center">Piso {piso}</h2>
 
             {/* Mostrar imagen según el piso */}
-            {piso == 1 && (
+            {piso === "1" && ( // Comparación estricta con cadena
               <div className="text-center">
                 <img
                   src="/planta_baja.png"
@@ -110,7 +110,7 @@ const LocationsPage = () => {
                 />
               </div>
             )}
-            {piso == 2 && (
+            {piso === "2" && ( // Comparación estricta con cadena
               <div className="text-center">
                 <img
                   src="/planta_alta.png"
@@ -165,6 +165,7 @@ const LocationsPage = () => {
             </table>
           </div>
         ))}
+
 
       {/* Modal para agregar locación */}
       {showAddModal && (
