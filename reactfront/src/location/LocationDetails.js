@@ -36,6 +36,9 @@ const LocationDetails = () => {
     observed_by: "",
   });
 
+  const [maintenances, setMaintenances] = useState([]); // Estado para los mantenimientos
+  const [maintenancesDrawerOpen, setMaintenancesDrawerOpen] = useState(false); // Estado para controlar la apertura del drawer de mantenimientos
+
 
   useEffect(() => {
     const fetchLocationDetails = async () => {
@@ -151,8 +154,8 @@ const LocationDetails = () => {
 
   const handleOpenObservations = async (assetId) => {
     try {
-      const response = await axios.get(`/observation-history/${assetId}`);
-      setObservations(response.data ? [response.data] : []);
+      const response = await axios.get(`http://localhost:3000/api/assets/${assetId}`);
+      setObservations(response.data.observations || []); // Asumimos que la API devuelve un campo 'observations'
       setObservationsDrawerOpen(true);
     } catch (error) {
       console.error("Error fetching observations:", error);
@@ -197,6 +200,16 @@ const LocationDetails = () => {
     } catch (error) {
       console.error("Error al guardar la observación:", error);
       alert("No se pudo guardar la observación. Verifica los datos o el servidor.");
+    }
+  };
+
+  const handleOpenMaintenances = async (assetId) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/assets/${assetId}`);
+      setMaintenances(response.data.maintenances || []);  // Guardamos los mantenimientos
+      setMaintenancesDrawerOpen(true); // Abrimos el drawer para mostrar los mantenimientos
+    } catch (error) {
+      console.error("Error fetching maintenances:", error);
     }
   };
   
@@ -344,8 +357,8 @@ const LocationDetails = () => {
                 <td>
                   <button
                     className="btn btn-primary btn-sm"
-                    onClick={() => alert("Abrir modal para mantenimientos")}
-                  >
+                    onClick={() => handleOpenMaintenances(asset.id)}
+                    >
                     <i class="fa-solid fa-screwdriver-wrench"></i>
                   </button>
                 </td>
@@ -893,6 +906,83 @@ const LocationDetails = () => {
             </Button>
           </Box>
         </SwipeableDrawer>
+
+        
+
+        {/* SwipeableDrawer para los mantenimientos */}
+        <SwipeableDrawer
+          anchor="right"
+          open={maintenancesDrawerOpen}
+          onClose={() => setMaintenancesDrawerOpen(false)}
+          onOpen={() => {}}
+        >
+          <Box
+            sx={{
+              width: 400,
+              p: 3,
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              bgcolor: "#2b2f38",
+              color: "#ffffff",
+            }}
+          >
+            <Typography variant="h5" sx={{ mb: 3, color: "#61dafb" }}>
+              Mantenimientos del Equipo
+            </Typography>
+
+            {maintenances.length > 0 ? (
+              maintenances.map((maintenance) => (
+                <Box
+                  key={maintenance.id}
+                  sx={{
+                    mb: 2,
+                    p: 2,
+                    border: "1px solid #61dafb",
+                    borderRadius: "8px",
+                    bgcolor: "#29293d",
+                    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)", // Sombra para darle el estilo de tarjeta
+                  }}
+                >
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Descripción:</strong> {maintenance.description}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Fecha de Mantenimiento:</strong> {new Date(maintenance.maintenance_date).toLocaleString()}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Realizado por:</strong> {maintenance.performed_by}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Costo:</strong> ${maintenance.cost}
+                  </Typography>
+                </Box>
+              ))
+            ) : (
+              <Typography>No hay mantenimientos disponibles</Typography>
+            )}
+
+            {/* El botón de cerrar estará en la parte inferior */}
+            <Box sx={{ marginTop: "auto" }}>
+              <Button
+                variant="contained"
+                sx={{
+                  mt: 2,
+                  width: "100%",  
+                  bgcolor: "#61dafb",
+                  color: "#000",
+                  fontWeight: "bold",
+                }}
+                onClick={() => setMaintenancesDrawerOpen(false)}
+              >
+                Cerrar
+              </Button>
+            </Box>
+          </Box>
+        </SwipeableDrawer>
+
+
+
 
 
     </div>
