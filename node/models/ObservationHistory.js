@@ -17,7 +17,7 @@ export const ObservationHistory = sequelize.define('ObservationHistory', {
     },
     observed_at: {
         type: DataTypes.DATE,
-        allowNull: false,
+        defaultValue: DataTypes.NOW,
     },
     observed_by: {
         type: DataTypes.STRING,

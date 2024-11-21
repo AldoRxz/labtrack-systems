@@ -31,6 +31,7 @@ const LocationDetails = () => {
   const [observationsDrawerOpen, setObservationsDrawerOpen] = useState(false); // Estado para el SwipeableDrawer de observaciones
   const [observations, setObservations] = useState([]);
   const [showAddObservation, setShowAddObservation] = useState(false);
+  const [selectedObservationId, setSelectedObservationId] = useState(null);
   const [newObservation, setNewObservation] = useState({
     observation: "",
     observed_by: "",
@@ -52,6 +53,7 @@ const LocationDetails = () => {
 
     fetchLocationDetails();
   }, [id]);
+
 
   const handleAddAsset = async () => {
     try {
@@ -152,9 +154,10 @@ const LocationDetails = () => {
     setSelectedAsset(null);
   };
 
-  const handleOpenObservations = async (assetId) => {
+  const handleOpenObservations = async (asset) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/assets/${assetId}`);
+      setSelectedAsset(asset);
+      const response = await axios.get(`http://localhost:3000/api/assets/${asset.id}`);
       setObservations(response.data.observations || []); // Asumimos que la API devuelve un campo 'observations'
       setObservationsDrawerOpen(true);
     } catch (error) {
@@ -166,42 +169,95 @@ const LocationDetails = () => {
     setObservationsDrawerOpen(false);
     setObservations([]);
   };
-
+  
   const handleSaveObservation = async () => {
+    if (!selectedAsset) {
+      alert("Por favor selecciona un equipo antes de guardar una observación.");
+      return;
+    }
+  
+    const payload = {
+      asset_id: selectedAsset.id,
+      observation: newObservation.observation,
+      observed_by: newObservation.observed_by,
+    };
+  
     try {
-      if (!selectedAsset || !selectedAsset.id) {
-        alert("Por favor selecciona un equipo antes de guardar una observación.");
-        return;
-      }
+      // Realiza la solicitud POST al backend
+      const response = await axios.post('/observation-history', payload);
   
-      const payload = {
-        asset_id: selectedAsset.id,
-        observation: newObservation.observation,
-        observed_by: newObservation.observed_by,
-      };
+      // Agregar la nueva observación a la lista existente
+      setObservations((prevObservations) => [...prevObservations, response.data]);
   
-      console.log("Payload enviado:", payload);
-  
-      const response = await axios.post(
-        "http://localhost:3000/api/observation-history",
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-  
-      console.log("Respuesta del backend:", response.data);
-  
-      setObservations((prev) => [...prev, response.data]);
+      // Restablecer el formulario y cerrar el modal
       setNewObservation({ observation: "", observed_by: "" });
-      alert("Observación guardada correctamente.");
+      setShowAddObservation(false);
+  
+      alert('Observación guardada exitosamente.');
     } catch (error) {
       console.error("Error al guardar la observación:", error);
-      alert("No se pudo guardar la observación. Verifica los datos o el servidor.");
+      alert('Error al guardar la observación.');
     }
   };
+
+  // eslint-disable-next-line no-unused-vars
+  const handleUpdateObservation = async () => {
+    if (!selectedObservationId) {
+      alert("No se ha seleccionado ninguna observación para actualizar.");
+      return;
+    }
+  
+    const payload = {
+      observation: newObservation.observation,
+      observed_by: newObservation.observed_by,
+    };
+  
+    try {
+      await axios.put(`/observation-history/${selectedObservationId}`, payload);
+      alert('Observación actualizada exitosamente.');
+  
+      // Actualiza las observaciones locales
+      setObservations((prev) =>
+        prev.map((obs) =>
+          obs.id === selectedObservationId ? { ...obs, ...payload } : obs
+        )
+      );
+  
+      // Limpia el formulario
+      setNewObservation({ observation: '', observed_by: '' });
+      setSelectedObservationId(null); // Limpia el ID seleccionado
+      setShowAddObservation(false); // Cierra el formulario
+    } catch (error) {
+      console.error("Error al actualizar la observación:", error);
+      alert('Error al actualizar la observación.');
+    }
+  };
+
+  const handleEditObservation = (observation) => {
+    setNewObservation({
+      observation: observation.observation,
+      observed_by: observation.observed_by,
+    });
+    setSelectedObservationId(observation.id); // Guarda el ID de la observación a editar
+    setShowAddObservation(true); // Abre el formulario
+  };
+  
+
+  const handleDeleteObservation = async (id) => {
+    if (window.confirm("¿Estás seguro de que deseas eliminar esta observación?")) {
+      try {
+        await axios.delete(`/observation-history/${id}`);
+        setObservations((prev) => prev.filter((obs) => obs.id !== id));
+        alert("Observación eliminada exitosamente.");
+      } catch (error) {
+        console.error("Error al eliminar la observación:", error);
+        alert("Error al eliminar la observación.");
+      }
+    }
+  };
+  
+  
+
 
   const handleOpenMaintenances = async (assetId) => {
     try {
@@ -348,7 +404,7 @@ const LocationDetails = () => {
                 <td>
                   <button
                     className="btn btn-secondary btn-sm"
-                    onClick={() => handleOpenObservations(asset.id)}
+                    onClick={() => handleOpenObservations(asset)} 
                   >
                     <i class="fa-regular fa-eye"></i>
                   </button>
@@ -672,9 +728,11 @@ const LocationDetails = () => {
             p: 3,
             display: "flex",
             flexDirection: "column",
-            height: "100%",
+            justifyContent: "space-between",
+            height: "100vh", // Asegura que cubra toda la ventana
             bgcolor: "#2b2f38", // Fondo oscuro
             color: "#ffffff", // Texto claro
+            overflowY: "auto", // Permite scroll si el contenido es demasiado alto
           }}
         >
           {selectedAsset ? (
@@ -769,10 +827,11 @@ const LocationDetails = () => {
               p: 3,
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between", // Para distribuir contenido y botón de cerrar
-              height: "100%",
-              bgcolor: "#2b2f38",
-              color: "#ffffff",
+              justifyContent: "space-between",
+              height: "100vh", // Asegura que cubra toda la ventana
+              bgcolor: "#2b2f38", // Fondo oscuro
+              color: "#ffffff", // Texto claro
+              overflowY: "auto", // Permite scroll si el contenido es demasiado alto
             }}
           >
             <Box>
@@ -868,8 +927,8 @@ const LocationDetails = () => {
                   <Box
                     key={obs.id}
                     sx={{
-                      mb: 2,
-                      p: 2,
+                      mb: 4,
+                      p: 3,
                       border: "1px solid #61dafb",
                       borderRadius: "8px",
                       bgcolor: "#29293d",
@@ -879,17 +938,43 @@ const LocationDetails = () => {
                       <strong>Observación:</strong> {obs.observation}
                     </Typography>
                     <Typography variant="body1" sx={{ mb: 1 }}>
-                      <strong>Fecha:</strong>{" "}
-                      {new Date(obs.observed_at).toLocaleString()}
+                      <strong>Fecha:</strong> {new Date(obs.observed_at).toLocaleString()}
                     </Typography>
                     <Typography variant="body1" sx={{ mb: 1 }}>
                       <strong>Observado por:</strong> {obs.observed_by}
                     </Typography>
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", gap: "8px", mt: 2 }}>
+                      <Button
+                        variant="contained"
+                        
+                        sx={{
+                          bgcolor: "#fbc02d",
+                          color: "#000",
+                          ":hover": { bgcolor: "#f9a825" },
+                        }}
+                        onClick={() => handleEditObservation(obs)}
+                      >
+                          <i className="fa-solid fa-pen-to-square"></i>
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          bgcolor: "#d32f2f",
+                          color: "#fff",
+                          ":hover": { bgcolor: "#c62828" },
+                        }}
+                        onClick={() => handleDeleteObservation(obs.id)}
+                      >
+                          <i className="fa-solid fa-trash"></i>
+                      </Button>
+                    </Box>
                   </Box>
+
                 ))
               ) : (
                 <Typography>No hay observaciones disponibles</Typography>
               )}
+
             </Box>
 
             <Button
@@ -922,9 +1007,11 @@ const LocationDetails = () => {
               p: 3,
               display: "flex",
               flexDirection: "column",
-              height: "100%",
-              bgcolor: "#2b2f38",
-              color: "#ffffff",
+              justifyContent: "space-between",
+              height: "100vh", // Asegura que cubra toda la ventana
+              bgcolor: "#2b2f38", // Fondo oscuro
+              color: "#ffffff", // Texto claro
+              overflowY: "auto", // Permite scroll si el contenido es demasiado alto
             }}
           >
             <Typography variant="h5" sx={{ mb: 3, color: "#61dafb" }}>
@@ -968,7 +1055,7 @@ const LocationDetails = () => {
                 variant="contained"
                 sx={{
                   mt: 2,
-                  width: "100%",  
+                  width: 100,
                   bgcolor: "#61dafb",
                   color: "#000",
                   fontWeight: "bold",
