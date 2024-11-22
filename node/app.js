@@ -7,6 +7,8 @@ import assetRoutes from './routes/assets.js';
 import maintenanceRecordRoutes from './routes/maintenanceRecords.js';
 import locationRoutes from './routes/locations.js';
 import observationHistoryRoutes from './routes/observationHistory.js';
+import userRoutes from './routes/user.js';
+
 
 const app = express();
 
@@ -17,6 +19,7 @@ app.use('/api/assets', assetRoutes);
 app.use('/api/maintenance-records', maintenanceRecordRoutes);
 app.use('/api/locations', locationRoutes);
 app.use('/api/observation-history', observationHistoryRoutes);
+app.use('/api/users', userRoutes);
 
 
 
