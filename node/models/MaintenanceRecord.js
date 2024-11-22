@@ -16,7 +16,7 @@ export const MaintenanceRecord = sequelize.define(
         },
         maintenance_date: {
             type: DataTypes.DATE,
-            allowNull: false,
+            defaultValue: DataTypes.NOW,
         },
         description: {
             type: DataTypes.STRING,

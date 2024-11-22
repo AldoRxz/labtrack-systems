@@ -37,8 +37,17 @@ const LocationDetails = () => {
     observed_by: "",
   });
 
-  const [maintenances, setMaintenances] = useState([]); // Estado para los mantenimientos
-  const [maintenancesDrawerOpen, setMaintenancesDrawerOpen] = useState(false); // Estado para controlar la apertura del drawer de mantenimientos
+  
+  const [selectedMaintenanceId, setSelectedMaintenanceId] = useState(null); // ID del mantenimiento seleccionado
+  const [newMaintenance, setNewMaintenance] = useState({
+    description: "",
+    cost: "",
+    performed_by: "",
+  });
+
+  const [maintenancesDrawerOpen, setMaintenancesDrawerOpen] = useState(false);
+  const [maintenances, setMaintenances] = useState([]);
+  const [showAddMaintenance, setShowAddMaintenance] = useState(false);
 
 
   useEffect(() => {
@@ -256,18 +265,112 @@ const LocationDetails = () => {
     }
   };
   
+
   
 
-
-  const handleOpenMaintenances = async (assetId) => {
+  // Abrir y cerrar detalles de mantenimientos
+  const handleOpenMaintenances = async (asset) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/assets/${assetId}`);
-      setMaintenances(response.data.maintenances || []);  // Guardamos los mantenimientos
-      setMaintenancesDrawerOpen(true); // Abrimos el drawer para mostrar los mantenimientos
+      setSelectedAsset(asset); // Establece el equipo seleccionado
+      const response = await axios.get(`http://localhost:3000/api/assets/${asset.id}`);
+      setMaintenances(response.data.maintenances || []); // Obtén mantenimientos del equipo
+      setMaintenancesDrawerOpen(true);
     } catch (error) {
-      console.error("Error fetching maintenances:", error);
+      console.error("Error al obtener los mantenimientos:", error);
     }
   };
+
+  const handleCloseMaintenances = () => {
+    setMaintenancesDrawerOpen(false);
+    setMaintenances([]);
+  };
+
+  // Guardar un nuevo mantenimiento
+  const handleSaveMaintenance = async () => {
+    if (!selectedAsset) {
+      alert("Por favor selecciona un equipo antes de guardar un mantenimiento.");
+      return;
+    }
+
+    const payload = {
+      asset_id: selectedAsset.id,
+      description: newMaintenance.description,
+      cost: newMaintenance.cost,
+      performed_by: newMaintenance.performed_by,
+    };
+
+    try {
+      const response = await axios.post('/maintenance-records', payload);
+      setMaintenances((prevMaintenances) => [...prevMaintenances, response.data]); // Agregar nuevo mantenimiento
+      setNewMaintenance({ description: "", cost: "", performed_by: "" }); // Restablecer formulario
+      setShowAddMaintenance(false); // Cerrar modal
+      alert('Mantenimiento guardado exitosamente.');
+    } catch (error) {
+      console.error("Error al guardar el mantenimiento:", error);
+      alert('Error al guardar el mantenimiento.');
+    }
+  };
+
+  // Actualizar un mantenimiento existente
+  const handleUpdateMaintenance = async () => {
+    if (!selectedMaintenanceId) {
+      alert("No se ha seleccionado ningún mantenimiento para actualizar.");
+      return;
+    }
+
+    const payload = {
+      description: newMaintenance.description,
+      cost: newMaintenance.cost,
+      performed_by: newMaintenance.performed_by,
+    };
+
+    try {
+      await axios.put(`/maintenance-records/${selectedMaintenanceId}`, payload);
+      alert('Mantenimiento actualizado exitosamente.');
+
+      // Actualiza los mantenimientos locales
+      setMaintenances((prev) =>
+        prev.map((mnt) =>
+          mnt.id === selectedMaintenanceId ? { ...mnt, ...payload } : mnt
+        )
+      );
+
+      // Limpia el formulario
+      setNewMaintenance({ description: "", cost: "", performed_by: "" });
+      setSelectedMaintenanceId(null);
+      setShowAddMaintenance(false);
+    } catch (error) {
+      console.error("Error al actualizar el mantenimiento:", error);
+      alert('Error al actualizar el mantenimiento.');
+    }
+  };
+
+  // Editar mantenimiento
+  const handleEditMaintenance = (maintenance) => {
+    setNewMaintenance({
+      description: maintenance.description,
+      cost: maintenance.cost,
+      performed_by: maintenance.performed_by,
+    });
+    setSelectedMaintenanceId(maintenance.id); // Establece el ID del mantenimiento a editar
+    setShowAddMaintenance(true); // Abre el formulario de mantenimiento
+  };
+
+  // Eliminar un mantenimiento
+  const handleDeleteMaintenance = async (id) => {
+    if (window.confirm("¿Estás seguro de que deseas eliminar este mantenimiento?")) {
+      try {
+        await axios.delete(`/maintenance-records/${id}`);
+        setMaintenances((prev) => prev.filter((mnt) => mnt.id !== id));
+        alert("Mantenimiento eliminado exitosamente.");
+      } catch (error) {
+        console.error("Error al eliminar el mantenimiento:", error);
+        alert("Error al eliminar el mantenimiento.");
+      }
+    }
+  };
+
+
   
 
   if (!location) {
@@ -413,7 +516,7 @@ const LocationDetails = () => {
                 <td>
                   <button
                     className="btn btn-primary btn-sm"
-                    onClick={() => handleOpenMaintenances(asset.id)}
+                    onClick={() => handleOpenMaintenances(asset)}
                     >
                     <i class="fa-solid fa-screwdriver-wrench"></i>
                   </button>
@@ -994,12 +1097,12 @@ const LocationDetails = () => {
 
         
 
+
         {/* SwipeableDrawer para los mantenimientos */}
         <SwipeableDrawer
           anchor="right"
           open={maintenancesDrawerOpen}
-          onClose={() => setMaintenancesDrawerOpen(false)}
-          onOpen={() => {}}
+          onClose={handleCloseMaintenances}
         >
           <Box
             sx={{
@@ -1007,66 +1110,213 @@ const LocationDetails = () => {
               p: 3,
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
-              height: "100vh", // Asegura que cubra toda la ventana
-              bgcolor: "#2b2f38", // Fondo oscuro
-              color: "#ffffff", // Texto claro
-              overflowY: "auto", // Permite scroll si el contenido es demasiado alto
+              height: "100%",
+              bgcolor: "#2b2f38",
+              color: "#ffffff",
             }}
           >
-            <Typography variant="h5" sx={{ mb: 3, color: "#61dafb" }}>
+            <Typography
+              variant="h5"
+              sx={{ mb: 3, color: "#61dafb", textAlign: "center", fontWeight: "bold" }}
+            >
               Mantenimientos del Equipo
             </Typography>
 
+            <Button
+              variant="contained"
+              sx={{
+                mb: 2,
+                bgcolor: "#61dafb",
+                color: "#000",
+                fontWeight: "bold",
+                ":hover": { bgcolor: "#50b5e8" },
+              }}
+              onClick={() => setShowAddMaintenance(true)}
+            >
+              Agregar Nuevo Mantenimiento
+            </Button>
+
+            {/* Formulario para agregar o editar mantenimiento */}
+            {showAddMaintenance && (
+              <Box
+                sx={{
+                  mb: 3,
+                  p: 2,
+                  border: "1px solid #61dafb",
+                  borderRadius: "8px",
+                  bgcolor: "#29293d",
+                }}
+              >
+                <Typography
+                  variant="body1"
+                  sx={{ mb: 2, color: "#61dafb", textAlign: "center" }}
+                >
+                  {selectedMaintenanceId ? "Editar Mantenimiento" : "Nuevo Mantenimiento"}
+                </Typography>
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="body2" sx={{ color: "#ffffff" }}>
+                    Descripción:
+                  </Typography>
+                  <textarea
+                    rows="3"
+                    style={{
+                      width: "100%",
+                      background: "#1e1e2f",
+                      color: "#ffffff",
+                      border: "1px solid #61dafb",
+                      borderRadius: "5px",
+                      padding: "10px",
+                    }}
+                    value={newMaintenance.description || ""}
+                    onChange={(e) =>
+                      setNewMaintenance({ ...newMaintenance, description: e.target.value })
+                    }
+                  />
+                </Box>
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="body2" sx={{ color: "#ffffff" }}>
+                    Costo:
+                  </Typography>
+                  <input
+                    type="number"
+                    style={{
+                      width: "100%",
+                      background: "#1e1e2f",
+                      color: "#ffffff",
+                      border: "1px solid #61dafb",
+                      borderRadius: "5px",
+                      padding: "10px",
+                    }}
+                    value={newMaintenance.cost || ""}
+                    onChange={(e) =>
+                      setNewMaintenance({ ...newMaintenance, cost: e.target.value })
+                    }
+                  />
+                </Box>
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="body2" sx={{ color: "#ffffff" }}>
+                    Realizado por:
+                  </Typography>
+                  <input
+                    type="text"
+                    style={{
+                      width: "100%",
+                      background: "#1e1e2f",
+                      color: "#ffffff",
+                      border: "1px solid #61dafb",
+                      borderRadius: "5px",
+                      padding: "10px",
+                    }}
+                    value={newMaintenance.performed_by || ""}
+                    onChange={(e) =>
+                      setNewMaintenance({
+                        ...newMaintenance,
+                        performed_by: e.target.value,
+                      })
+                    }
+                  />
+                </Box>
+                <Button
+                  variant="contained"
+                  sx={{
+                    mt: 2,
+                    bgcolor: "#61dafb",
+                    color: "#000",
+                    fontWeight: "bold",
+                    ":hover": { bgcolor: "#50b5e8" },
+                  }}
+                  onClick={
+                    selectedMaintenanceId
+                      ? handleUpdateMaintenance
+                      : handleSaveMaintenance
+                  }
+                >
+                  {selectedMaintenanceId ? "Actualizar Mantenimiento" : "Guardar Mantenimiento"}
+                </Button>
+              </Box>
+            )}
+
+            {/* Lista de mantenimientos */}
             {maintenances.length > 0 ? (
-              maintenances.map((maintenance) => (
+              maintenances.map((mnt) => (
                 <Box
-                  key={maintenance.id}
+                  key={mnt.id}
                   sx={{
                     mb: 2,
                     p: 2,
                     border: "1px solid #61dafb",
                     borderRadius: "8px",
                     bgcolor: "#29293d",
-                    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)", // Sombra para darle el estilo de tarjeta
+                    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
                   }}
                 >
                   <Typography variant="body1" sx={{ mb: 1 }}>
-                    <strong>Descripción:</strong> {maintenance.description}
+                    <strong>Descripción:</strong> {mnt.description}
                   </Typography>
                   <Typography variant="body1" sx={{ mb: 1 }}>
-                    <strong>Fecha de Mantenimiento:</strong> {new Date(maintenance.maintenance_date).toLocaleString()}
+                    <strong>Costo:</strong> ${mnt.cost}
                   </Typography>
                   <Typography variant="body1" sx={{ mb: 1 }}>
-                    <strong>Realizado por:</strong> {maintenance.performed_by}
+                    <strong>Realizado por:</strong> {mnt.performed_by}
                   </Typography>
-                  <Typography variant="body1" sx={{ mb: 1 }}>
-                    <strong>Costo:</strong> ${maintenance.cost}
-                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      gap: "1rem",
+                    }}
+                  >
+                    <Button
+                      variant="contained"
+                      size="small"
+                      sx={{
+                        bgcolor: "#ffc107",
+                        color: "#000",
+                        ":hover": { bgcolor: "#e0a800" },
+                      }}
+                      onClick={() => handleEditMaintenance(mnt)}
+                    >
+                      Editar
+                    </Button>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      sx={{
+                        bgcolor: "#dc3545",
+                        color: "#fff",
+                        ":hover": { bgcolor: "#c82333" },
+                      }}
+                      onClick={() => handleDeleteMaintenance(mnt.id)}
+                    >
+                      Eliminar
+                    </Button>
+                  </Box>
                 </Box>
               ))
             ) : (
               <Typography>No hay mantenimientos disponibles</Typography>
             )}
 
-            {/* El botón de cerrar estará en la parte inferior */}
-            <Box sx={{ marginTop: "auto" }}>
-              <Button
-                variant="contained"
-                sx={{
-                  mt: 2,
-                  width: 100,
-                  bgcolor: "#61dafb",
-                  color: "#000",
-                  fontWeight: "bold",
-                }}
-                onClick={() => setMaintenancesDrawerOpen(false)}
-              >
-                Cerrar
-              </Button>
-            </Box>
+            {/* Botón para cerrar la modal */}
+            <Button
+              variant="contained"
+              sx={{
+                mt: "auto",
+                bgcolor: "#61dafb",
+                color: "#000",
+                fontWeight: "bold",
+                ":hover": { bgcolor: "#50b5e8" },
+              }}
+              onClick={handleCloseMaintenances}
+            >
+              Cerrar
+            </Button>
           </Box>
         </SwipeableDrawer>
+
+
+
+
 
 
 

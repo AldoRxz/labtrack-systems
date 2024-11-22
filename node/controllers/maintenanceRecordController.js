@@ -11,26 +11,27 @@ export const getAllMaintenanceRecords = async (req, res) => {
 
 export const createMaintenanceRecord = async (req, res) => {
     try {
-        const { asset_id, observation, observed_by } = req.body;
-    
+        const { asset_id, description, cost, performed_by } = req.body;
+
         // Validar datos
-        if (!asset_id || !observation || !observed_by) {
-          return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+        if (!asset_id || !description || !cost || !performed_by) {
+            return res.status(400).json({ error: 'Todos los campos son obligatorios' });
         }
-    
-        // Crear la observación
-        const newObservation = await ObservationHistory.create({
-          asset_id,
-          observation,
-          observed_by,
-          observed_at: new Date(),
+
+        // Crear el registro de mantenimiento
+        const newMaintenanceRecord = await MaintenanceRecord.create({
+            asset_id,
+            description,
+            cost,
+            performed_by,
+            maintenance_date: new Date(), // Fecha actual por defecto
         });
-    
-        res.status(201).json(newObservation);
-      } catch (error) {
-        console.error('Error al crear la observación:', error);
-        res.status(500).json({ error: 'Error al crear la observación' });
-      }
+
+        res.status(201).json(newMaintenanceRecord);
+    } catch (error) {
+        console.error('Error al crear el registro de mantenimiento:', error);
+        res.status(500).json({ error: 'Error al crear el registro de mantenimiento' });
+    }
 };
 
 export const getMaintenanceRecordById = async (req, res) => {
