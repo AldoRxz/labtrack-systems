@@ -9,6 +9,7 @@ const LocationsPage = () => {
     name: "",
     description: "",
     piso: "",
+    classroom: "",
   });
   const [editLocation, setEditLocation] = useState({});
   const [showAddModal, setShowAddModal] = useState(false);
@@ -28,14 +29,14 @@ const LocationsPage = () => {
   };
 
   const handleAddLocation = async () => {
-    if (!newLocation.name || !newLocation.piso) {
+    if (!newLocation.name || !newLocation.piso || !newLocation.classroom) {
       alert("Por favor, completa todos los campos obligatorios.");
       return;
     }
     try {
       const response = await axios.post("/locations", newLocation);
       setLocations([...locations, response.data]);
-      setNewLocation({ name: "", description: "", piso: "" });
+      setNewLocation({ name: "", description: "", piso: "",  classroom: ""  });
       setShowAddModal(false);
     } catch (error) {
       console.error("Error adding location:", error);
@@ -43,7 +44,7 @@ const LocationsPage = () => {
   };
 
   const handleEditLocation = async () => {
-    if (!editLocation.name || !editLocation.piso) {
+    if (!editLocation.name || !editLocation.piso || !editLocation.classroom) {
       alert("Por favor, completa todos los campos obligatorios.");
       return;
     }
@@ -82,6 +83,8 @@ const LocationsPage = () => {
     acc[piso].push(location);
     return acc;
   }, {});
+
+  const classroomOptions = ["LDS", "LIA", "LIS", "LRD", "LTE", "LTI", "LWI"];
 
   return (
     <div className="container mt-4">
@@ -128,6 +131,7 @@ const LocationsPage = () => {
                   <th>Nombre</th>
                   <th>Descripción</th>
                   <th>Piso</th>
+                  <th>Aula</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -142,6 +146,7 @@ const LocationsPage = () => {
                     </td>
                     <td>{location.description}</td>
                     <td>{location.piso}</td>
+                    <td>{location.classroom}</td>
                     <td>
                       <button
                         className="btn btn-warning btn-sm me-2"
@@ -166,8 +171,6 @@ const LocationsPage = () => {
           </div>
         ))}
 
-
-      {/* Modal para agregar locación */}
       {showAddModal && (
         <div className="modal show d-block" tabIndex="-1">
           <div className="modal-dialog">
@@ -219,6 +222,26 @@ const LocationsPage = () => {
                     }
                   />
                 </div>
+                <div className="mb-3">
+                  <label className="form-label">Aula</label>
+                  <select
+                    className="form-control"
+                    value={newLocation.classroom}
+                    onChange={(e) =>
+                      setNewLocation({
+                        ...newLocation,
+                        classroom: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="">Seleccione una aula</option>
+                    {classroomOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <div className="modal-footer">
                 <button
@@ -236,7 +259,6 @@ const LocationsPage = () => {
         </div>
       )}
 
-      {/* Modal para editar locación */}
       {showEditModal && (
         <div className="modal show d-block" tabIndex="-1">
           <div className="modal-dialog">
@@ -287,6 +309,26 @@ const LocationsPage = () => {
                       })
                     }
                   />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Aula</label>
+                  <select
+                    className="form-control"
+                    value={editLocation.classroom || ""}
+                    onChange={(e) =>
+                      setEditLocation({
+                        ...editLocation,
+                        classroom: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="">Seleccione una aula</option>
+                    {classroomOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
               <div className="modal-footer">
