@@ -382,6 +382,26 @@ const LocationDetails = () => {
       <h1 className="text-center">{location.name}</h1>
       <p className="text-center">{location.description}</p>
 
+      {/* Mostrar la imagen del classroom */}
+      {location.classroom && (
+        <div className="text-center my-4">
+          <img
+            src={`/classrooms/${location.classroom}.png`} // Ruta de la imagen basada en el campo classroom
+            alt={`Classroom ${location.classroom}`}
+            className="img-fluid"
+            style={{
+              maxWidth: "300px",
+              height: "auto",
+              border: "2px solid #61dafb",
+              borderRadius: "10px",
+            }}
+          />
+          <p className="mt-3" style={{ color: "#61dafb" }}>
+            Aula: {location.classroom}
+          </p>
+        </div>
+      )}
+
       <div className="container mt-4">
         <h2 className="mb-4" style={{ color: "#61dafb" }}>Significado de los Iconos</h2>
         <div className="d-flex flex-wrap justify-content-start text-center" style={{ gap: "2rem" }}>
