@@ -11,6 +11,10 @@ export const Location = sequelize.define('Location', {
         type: DataTypes.TEXT,
         allowNull: true,
     },
+    classroom: {
+        type: DataTypes.STRING, // Refleja el nuevo campo en MySQL
+        allowNull: true,        // Permitir nulos si no es obligatorio
+    },
     piso: {
         type: DataTypes.INTEGER, // Nueva columna "piso"
         allowNull: false,
