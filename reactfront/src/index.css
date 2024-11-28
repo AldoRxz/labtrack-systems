@@ -171,3 +171,24 @@ a {
   color: red;
   margin-bottom: 10px;
 } */
+
+
+.map-container {
+  position: relative;
+  width: auto;
+  height: auto;
+}
+
+.computer-point {
+  position: absolute;
+}
+
+.status-dot {
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease-in-out;
+}
+
+.status-dot:hover {
+  transform: scale(1.2);
+}

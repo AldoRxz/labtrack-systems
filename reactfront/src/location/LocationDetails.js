@@ -390,12 +390,15 @@ const LocationDetails = () => {
             alt={`Classroom ${location.classroom}`}
             className="img-fluid"
             style={{
-              maxWidth: "300px",
+              maxWidth: "500px",
               height: "auto",
               border: "2px solid #61dafb",
               borderRadius: "10px",
             }}
           />
+          
+           
+
           <p className="mt-3" style={{ color: "#61dafb" }}>
             Aula: {location.classroom}
           </p>

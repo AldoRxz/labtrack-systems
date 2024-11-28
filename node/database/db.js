@@ -1,9 +1,21 @@
 import { Sequelize } from 'sequelize';
 
-const db = new Sequelize('labtrack_systems', 'root', 'root', {
-    host: 'localhost',
+const db = new Sequelize('labtrack_systems', 'admin', 'test1234', {
+    host: 'labtrack-systems.chmaoa2mmf1n.us-east-2.rds.amazonaws.com',
     dialect: 'mysql',
-    logging: false, 
+    port: 3306, // Puerto de MySQL
+    logging: false, // Opcional: para desactivar logs en consola
 });
 
 export default db;
+
+
+// import { Sequelize } from 'sequelize';
+
+// const db = new Sequelize('labtrack_systems', 'root', 'root', {
+//     host: 'localhost',
+//     dialect: 'mysql',
+//     logging: false, 
+// });
+
+// export default db;

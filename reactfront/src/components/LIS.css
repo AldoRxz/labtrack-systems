@@ -1,0 +1,101 @@
+/* Contenedor principal */
+.room-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr 1fr 1fr; /* Dividimos en 5 columnas */
+    grid-template-rows: repeat(5, 1fr); /* 5 filas */
+    gap: 20px;
+    width: 900px;
+    height: 600px;
+    border: 2px solid black;
+    margin: auto;
+    background-color: white;
+    position: relative;
+  }
+  
+  /* Posiciones individuales */
+  
+  /* Columna izquierda */
+  .left-1 {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+  }
+  .left-2 {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+  }
+  .left-3 {
+    grid-column: 1 / 2;
+    grid-row: 3 / 4;
+  }
+  .left-4 {
+    grid-column: 1 / 2;
+    grid-row: 4 / 5;
+  }
+  
+  /* Columna derecha */
+  .right-1 {
+    grid-column: 5 / 6;
+    grid-row: 1 / 2;
+  }
+  .right-2 {
+    grid-column: 5 / 6;
+    grid-row: 2 / 3;
+  }
+  .right-3 {
+    grid-column: 5 / 6;
+    grid-row: 3 / 4;
+  }
+  .right-4 {
+    grid-column: 5 / 6;
+    grid-row: 4 / 5;
+  }
+  
+  /* Proyector central */
+  .proyector {
+    grid-column: 3 / 4;
+    grid-row: 3 / 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .proyector-img {
+    max-width: 100px;
+  }
+  
+  /* Pizarra */
+  .board {
+    grid-column: 5 / 6;
+    grid-row: 1 / 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .pizarron {
+    max-width: 120px;
+  }
+  
+  /* Regulador */
+  .regulator {
+    grid-column: 5 / 6;
+    grid-row: 5 / 6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .regulador-img {
+    max-width: 100px;
+  }
+  
+  /* Estilo para computadora y silla */
+  .computer {
+    max-width: 50px;
+  }
+  
+  .chair {
+    max-width: 30px;
+    margin-top: 5px;
+  }
+  
