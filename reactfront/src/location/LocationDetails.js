@@ -405,6 +405,10 @@ const LocationDetails = () => {
         </div>
       )}
 
+          {/* <p className="mt-3" style={{ color: "#61dafb" }}>
+            Aula: {location.classroom}
+          </p> */}
+
       <div className="container mt-4">
         <h2 className="mb-4" style={{ color: "#61dafb" }}>Significado de los Iconos</h2>
         <div className="d-flex flex-wrap justify-content-start text-center" style={{ gap: "2rem" }}>
