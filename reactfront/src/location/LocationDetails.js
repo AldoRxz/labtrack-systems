@@ -75,7 +75,7 @@ const LocationDetails = () => {
       console.log("Datos enviados al backend:", assetData);
   
       // Realiza la solicitud POST al backend
-      const response = await axios.post("http://localhost:3000/api/assets", assetData);
+      const response = await axios.post("/assets", assetData);
   
       console.log("Respuesta del backend:", response.data);
   
@@ -166,7 +166,7 @@ const LocationDetails = () => {
   const handleOpenObservations = async (asset) => {
     try {
       setSelectedAsset(asset);
-      const response = await axios.get(`http://localhost:3000/api/assets/${asset.id}`);
+      const response = await axios.get(`/assets/${asset.id}`);
       setObservations(response.data.observations || []); // Asumimos que la API devuelve un campo 'observations'
       setObservationsDrawerOpen(true);
     } catch (error) {
@@ -272,7 +272,7 @@ const LocationDetails = () => {
   const handleOpenMaintenances = async (asset) => {
     try {
       setSelectedAsset(asset); // Establece el equipo seleccionado
-      const response = await axios.get(`http://localhost:3000/api/assets/${asset.id}`);
+      const response = await axios.get(`/assets/${asset.id}`);
       setMaintenances(response.data.maintenances || []); // Obtén mantenimientos del equipo
       setMaintenancesDrawerOpen(true);
     } catch (error) {
