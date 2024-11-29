@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "../axios/axiosConfig";
+import { useNavigate } from "react-router-dom";
+
+import Avatar from "@mui/material/Avatar";
+import Typography from "@mui/material/Typography";
+import { deepOrange } from "@mui/material/colors";
+
 
 import {
   Box,
   SwipeableDrawer,
-  Typography,
   Button,
 } from "@mui/material";
 
 const LocationDetails = () => {
   const { id } = useParams();
+  const [username, setUsername] = useState(""); // Nombre del usuario
+
+  const navigate = useNavigate();
   const [location, setLocation] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false); // Modal para agregar equipo
   const [showEditModal, setShowEditModal] = useState(false); // Modal para editar equipo
@@ -51,6 +59,18 @@ const LocationDetails = () => {
 
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    const savedUsername = localStorage.getItem("username") || "Usuario";
+
+    if (!token) {
+      alert("Debes iniciar sesión para acceder a esta página.");
+      navigate("/"); // Redirects to login if token is missing
+      return;
+    }
+    setUsername(savedUsername);
+
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
     const fetchLocationDetails = async () => {
       try {
         const response = await axios.get(`/locations/${id}`);
@@ -61,7 +81,14 @@ const LocationDetails = () => {
     };
 
     fetchLocationDetails();
-  }, [id]);
+  }, [id, navigate]);
+
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    navigate("/");
+  };
 
 
   const handleAddAsset = async () => {
@@ -302,9 +329,20 @@ const LocationDetails = () => {
     try {
       const response = await axios.post('/maintenance-records', payload);
       setMaintenances((prevMaintenances) => [...prevMaintenances, response.data]); // Agregar nuevo mantenimiento
+
+      // Cambia el estado del asset a inactivo
+      await axios.put(`/assets/${selectedAsset.id}`, { ...selectedAsset, status: false });
+      setLocation((prevLocation) => ({
+        ...prevLocation,
+        assets: prevLocation.assets.map((asset) =>
+          asset.id === selectedAsset.id ? { ...asset, status: false } : asset
+        ),
+      }));
+
       setNewMaintenance({ description: "", cost: "", performed_by: "" }); // Restablecer formulario
       setShowAddMaintenance(false); // Cerrar modal
       alert('Mantenimiento guardado exitosamente.');
+
     } catch (error) {
       console.error("Error al guardar el mantenimiento:", error);
       alert('Error al guardar el mantenimiento.');
@@ -379,7 +417,63 @@ const LocationDetails = () => {
 
   return (
     <div className="container mt-4">
-      <h1 className="text-center">{location.name}</h1>
+      {/* Encabezado */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between", // Distribuir el espacio entre título y usuario
+          alignItems: "center",
+          marginBottom: "20px",
+        }}
+      >
+
+        {/* Usuario */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginLeft: "auto", // Empuja al lado derecho
+          }}
+        >
+          <Avatar
+            sx={{
+              bgcolor: deepOrange[500],
+              width: 56,
+              height: 56,
+              marginBottom: "5px",
+            }}
+          >
+            {username[0]?.toUpperCase()}
+          </Avatar>
+          <Typography
+            variant="subtitle1"
+            style={{ fontWeight: "bold", marginBottom: "5px" }}
+          >
+            {username}
+          </Typography>
+          <button
+            className="btn btn-danger btn-sm"
+            style={{ padding: "5px 15px", fontSize: "14px" }}
+            onClick={handleLogout}
+          >
+            Cerrar Sesión
+          </button>
+        </div>
+
+        {/* Título */}
+        <h1
+          style={{
+            position: "absolute", // Usa posición absoluta para centrarlo
+            left: "50%",
+            transform: "translateX(-50%)", // Mueve el título a la posición centrada
+            fontWeight: "bold",
+            margin: 0,
+          }}
+        >
+          {location.name}
+        </h1>
+      </div>
       <p className="text-center">{location.description}</p>
 
       {/* Mostrar la imagen del classroom */}
@@ -397,8 +491,6 @@ const LocationDetails = () => {
             }}
           />
           
-           
-
           <p className="mt-3" style={{ color: "#61dafb" }}>
             Aula: {location.classroom}
           </p>
@@ -1153,15 +1245,55 @@ const LocationDetails = () => {
               variant="contained"
               sx={{
                 mb: 2,
-                bgcolor: "#61dafb",
-                color: "#000",
+                bgcolor: selectedAsset?.status ? "#61dafb" : "#ccc", // Color de fondo dinámico
+                color: selectedAsset?.status ? "#000" : "#666", // Texto más claro si está activo
                 fontWeight: "bold",
-                ":hover": { bgcolor: "#50b5e8" },
+                cursor: selectedAsset?.status ? "pointer" : "not-allowed", // Cursor "not-allowed" si está inactivo
+                ":hover": selectedAsset?.status ? { bgcolor: "#50b5e8" } : {}, // Desactiva el hover si está inactivo
               }}
+              disabled={!selectedAsset?.status} // Deshabilita si el estado es inactivo
               onClick={() => setShowAddMaintenance(true)}
             >
               Agregar Nuevo Mantenimiento
             </Button>
+
+            {!selectedAsset?.status && (
+              <Button
+                variant="contained"
+                sx={{
+                  mb: 2,
+                  bgcolor: "#4caf50", // Verde para acción positiva
+                  color: "#fff",
+                  fontWeight: "bold",
+                  ":hover": { bgcolor: "#43a047" },
+                }}
+                onClick={async () => {
+                  try {
+                    const updatedAsset = { ...selectedAsset, status: true };
+
+                    const response = await axios.put(
+                      `/assets/${selectedAsset.id}`, 
+                      updatedAsset 
+                    );
+
+                    setLocation((prevLocation) => ({
+                      ...prevLocation,
+                      assets: prevLocation.assets.map((asset) =>
+                        asset.id === selectedAsset.id ? response.data : asset
+                      ),
+                    }));
+
+                    // alert("El estado del equipo ha sido actualizado a 'Activo'.");
+                    handleCloseMaintenances();
+                  } catch (error) {
+                    console.error("Error al marcar el mantenimiento como completado:", error);
+                    alert("Ocurrió un error al intentar completar el mantenimiento.");
+                  }
+                }}
+              >
+                Marcar ultimo manteniminto como Completado
+              </Button>
+            )}
 
             {/* Formulario para agregar o editar mantenimiento */}
             {showAddMaintenance && (
@@ -1265,7 +1397,10 @@ const LocationDetails = () => {
 
             {/* Lista de mantenimientos */}
             {maintenances.length > 0 ? (
-              maintenances.map((mnt) => (
+              maintenances
+              .slice() 
+              .reverse()
+              .map((mnt) => (
                 <Box
                   key={mnt.id}
                   sx={{
@@ -1285,6 +1420,14 @@ const LocationDetails = () => {
                   </Typography>
                   <Typography variant="body1" sx={{ mb: 1 }}>
                     <strong>Realizado por:</strong> {mnt.performed_by}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Fecha:</strong>{" "}
+                    {new Date(mnt.maintenance_date).toLocaleDateString("es-ES", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
                   </Typography>
                   <Box
                     sx={{

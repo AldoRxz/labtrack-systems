@@ -2,8 +2,14 @@ import React, { useState, useEffect } from "react";
 import axios from "../axios/axiosConfig";
 import { useNavigate } from "react-router-dom";
 
+import Avatar from "@mui/material/Avatar";
+import Typography from "@mui/material/Typography";
+import { deepOrange } from "@mui/material/colors";
+
+
 const LocationsPage = () => {
   const [locations, setLocations] = useState([]);
+  const [username, setUsername] = useState(""); 
   const navigate = useNavigate();
   const [newLocation, setNewLocation] = useState({
     name: "",
@@ -16,16 +22,33 @@ const LocationsPage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
-    fetchLocations();
-  }, []);
+    const token = localStorage.getItem("token");
+    const savedUsername = localStorage.getItem("username")|| "Usuario"; // Recupera el nombre de usuario
 
-  const fetchLocations = async () => {
-    try {
-      const response = await axios.get("/locations");
-      setLocations(response.data);
-    } catch (error) {
-      console.error("Error fetching locations:", error);
+    if (!token) {
+      alert("Debes iniciar sesión para acceder a esta página.");
+      navigate("/"); // Redirects to login if token is missing
+      return;
     }
+    setUsername(savedUsername);
+
+    const fetchLocations = async () => {
+      try {
+        const response = await axios.get("/locations");
+        setLocations(response.data);
+      } catch (error) {
+        console.error("Error fetching locations:", error);
+      }
+    };
+  
+    fetchLocations();
+  }, [navigate]); 
+
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Elimina el token
+    localStorage.removeItem("username"); // Elimina el nombre de usuario
+    navigate("/"); // Redirige al login
   };
 
   const handleAddLocation = async () => {
@@ -88,7 +111,63 @@ const LocationsPage = () => {
 
   return (
     <div className="container mt-4">
-      <h1 className="text-center mb-4">Locaciones</h1>
+      {/* Encabezado */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between", // Distribuye el espacio entre los elementos
+          alignItems: "center",
+        }}
+      >
+
+        {/* Usuario */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginLeft: "auto",
+          }}
+        >
+          <Avatar
+            sx={{
+              bgcolor: deepOrange[500],
+              width: 56,
+              height: 56,
+              marginBottom: "5px",
+            }}
+          >
+            {username[0]?.toUpperCase()}
+          </Avatar>
+          <Typography
+            variant="subtitle1"
+            style={{ fontWeight: "bold", marginBottom: "5px" }}
+          >
+            {username}
+          </Typography>
+          <button
+            className="btn btn-danger btn-sm"
+            style={{ padding: "5px 15px", fontSize: "14px" }}
+            onClick={handleLogout}
+          >
+            Cerrar Sesión
+          </button>
+        </div>
+        
+        {/* Título */}
+        <h1
+          style={{
+            position: "absolute", // Usa posición absoluta para centrarlo
+            left: "50%",
+            transform: "translateX(-50%)", // Mueve el título a la posición centrada
+            fontWeight: "bold",
+            margin: 0,
+          }}
+        >
+          Locaciones
+        </h1>
+      </div>
+
       <button
         className="btn btn-primary mb-3"
         onClick={() => setShowAddModal(true)}

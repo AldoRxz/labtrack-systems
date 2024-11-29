@@ -192,3 +192,9 @@ a {
 .status-dot:hover {
   transform: scale(1.2);
 }
+
+.title-container {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente (si es necesario dentro del contenedor) */
+}
