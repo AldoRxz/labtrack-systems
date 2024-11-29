@@ -30,6 +30,10 @@ export const MaintenanceRecord = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        created_by: {
+            type: DataTypes.STRING,
+            allowNull: true, 
+        },
     },
     {
         tableName: 'maintenance_records', // Nombre exacto de la tabla

@@ -11,10 +11,10 @@ export const getAllMaintenanceRecords = async (req, res) => {
 
 export const createMaintenanceRecord = async (req, res) => {
     try {
-        const { asset_id, description, cost, performed_by } = req.body;
+        const { asset_id, description, cost, performed_by, created_by } = req.body;
 
         // Validar datos
-        if (!asset_id || !description || !cost || !performed_by) {
+        if (!asset_id || !description || !cost || !performed_by ) {
             return res.status(400).json({ error: 'Todos los campos son obligatorios' });
         }
 
@@ -24,6 +24,7 @@ export const createMaintenanceRecord = async (req, res) => {
             description,
             cost,
             performed_by,
+            created_by,
             maintenance_date: new Date(), // Fecha actual por defecto
         });
 
