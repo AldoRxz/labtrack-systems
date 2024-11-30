@@ -101,3 +101,36 @@ export const getLocationsWithDetails = async (req, res) => {
         res.status(500).json({ error: 'Error al obtener las ubicaciones con detalles' });
     }
 };
+
+
+export const getLocationDetailsById = async (req, res) => {
+    try {
+        const location = await Location.findByPk(req.params.id, {
+            include: [
+                {
+                    model: Asset,
+                    as: 'assets',
+                    include: [
+                        {
+                            model: ObservationHistory,
+                            as: 'observations',
+                        },
+                        {
+                            model: MaintenanceRecord,
+                            as: 'maintenances',
+                        },
+                    ],
+                },
+            ],
+        });
+
+        if (location) {
+            res.json(location);
+        } else {
+            res.status(404).json({ error: 'Ubicación no encontrada' });
+        }
+    } catch (error) {
+        console.error('Error al obtener la ubicación con detalles:', error);
+        res.status(500).json({ error: 'Error al obtener la ubicación con detalles' });
+    }
+};
