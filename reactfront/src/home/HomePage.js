@@ -21,7 +21,8 @@ const LoginPage = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/api/users/login', credentials);
+      // const response = await axios.post('http://localhost:3000/api/users/login', credentials);
+      const response = await axios.post('https://labtrack-systems-api.onrender.com/api/users/login', credentials);
       if (response.data.token) {
         localStorage.setItem('token', response.data.token); // Guarda el token
         localStorage.setItem('username', credentials.username); // Guarda el nombre de usuario
