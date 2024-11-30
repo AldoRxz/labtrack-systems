@@ -1,6 +1,10 @@
 import {Location} from '../models/Location.js';
 import { Asset } from '../models/Asset.js';
 
+import { ObservationHistory} from '../models/ObservationHistory.js';
+import { MaintenanceRecord} from '../models/MaintenanceRecord.js';
+
+
 export const getAllLocations = async (req, res) => {
     try {
         const locations = await Location.findAll();
@@ -66,5 +70,34 @@ export const deleteLocation = async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ error: 'Error al eliminar la ubicación' });
+    }
+};
+
+
+export const getLocationsWithDetails = async (req, res) => {
+    try {
+        const locations = await Location.findAll({
+            include: [
+                {
+                    model: Asset,
+                    as: 'assets',
+                    include: [
+                        {
+                            model: ObservationHistory,
+                            as: 'observations',
+                        },
+                        {
+                            model: MaintenanceRecord,
+                            as: 'maintenances',
+                        },
+                    ],
+                },
+            ],
+        });
+
+        res.json(locations);
+    } catch (error) {
+        console.error('Error al obtener las ubicaciones con detalles:', error);
+        res.status(500).json({ error: 'Error al obtener las ubicaciones con detalles' });
     }
 };
