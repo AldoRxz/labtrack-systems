@@ -324,6 +324,7 @@ const LocationDetails = () => {
       description: newMaintenance.description,
       cost: newMaintenance.cost,
       performed_by: newMaintenance.performed_by,
+      created_by: username,
     };
 
     try {
@@ -1428,6 +1429,9 @@ const LocationDetails = () => {
                       month: "long",
                       day: "numeric",
                     })}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Creado por:</strong> {mnt.created_by}
                   </Typography>
                   <Box
                     sx={{
