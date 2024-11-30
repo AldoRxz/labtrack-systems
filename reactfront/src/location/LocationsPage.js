@@ -6,6 +6,9 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { deepOrange } from "@mui/material/colors";
 
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
 
 const LocationsPage = () => {
   const [locations, setLocations] = useState([]);
@@ -51,6 +54,42 @@ const LocationsPage = () => {
     navigate("/"); // Redirige al login
   };
 
+
+  const handleExportToExcel = () => {
+    // Agrupar locaciones por piso
+    const groupedLocations = locations.reduce((acc, location) => {
+      const piso = location.piso;
+      if (!acc[piso]) {
+        acc[piso] = [];
+      }
+      acc[piso].push(location);
+      return acc;
+    }, {});
+
+    // Crear un libro de Excel
+    const workbook = XLSX.utils.book_new();
+
+    // Crear una hoja por cada piso
+    Object.keys(groupedLocations).forEach((piso) => {
+      const sheetData = groupedLocations[piso].map((location) => ({
+        "ID": location.id,
+        "Nombre": location.name,
+        "Descripción": location.description,
+        "Piso": location.piso,
+        "Aula": location.classroom,
+      }));
+
+      const sheet = XLSX.utils.json_to_sheet(sheetData);
+      XLSX.utils.book_append_sheet(workbook, sheet, `Piso ${piso}`);
+    });
+
+    // Generar archivo Excel
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(blob, "Sistemas.xlsx");
+  };
+
+  
   const handleAddLocation = async () => {
     if (!newLocation.name || !newLocation.piso || !newLocation.classroom) {
       alert("Por favor, completa todos los campos obligatorios.");
@@ -249,6 +288,14 @@ const LocationsPage = () => {
             </table>
           </div>
         ))}
+
+        {/* Botón para exportar a Excel */}
+        <button
+          className="btn btn-success mb-3"
+          onClick={handleExportToExcel}
+        >
+          Exportar a Excel
+        </button>
 
       {showAddModal && (
         <div className="modal show d-block" tabIndex="-1">
