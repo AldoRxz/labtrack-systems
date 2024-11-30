@@ -55,39 +55,107 @@ const LocationsPage = () => {
   };
 
 
-  const handleExportToExcel = () => {
-    // Agrupar locaciones por piso
-    const groupedLocations = locations.reduce((acc, location) => {
-      const piso = location.piso;
-      if (!acc[piso]) {
-        acc[piso] = [];
-      }
-      acc[piso].push(location);
-      return acc;
-    }, {});
-
-    // Crear un libro de Excel
-    const workbook = XLSX.utils.book_new();
-
-    // Crear una hoja por cada piso
-    Object.keys(groupedLocations).forEach((piso) => {
-      const sheetData = groupedLocations[piso].map((location) => ({
-        "ID": location.id,
+  const handleExportToExcel = async () => {
+    try {
+      // Realizar la petición a la URL para obtener los datos
+      const response = await axios.get("http://localhost:3000/api/locations/details");
+      const locations = response.data;
+  
+      // Crear un libro de Excel
+      const workbook = XLSX.utils.book_new();
+  
+      // **Hoja General de Locaciones**
+      const allLocationsSheetData = locations.map((location) => ({
+        "ID Locación": location.id,
         "Nombre": location.name,
         "Descripción": location.description,
         "Piso": location.piso,
         "Aula": location.classroom,
       }));
-
-      const sheet = XLSX.utils.json_to_sheet(sheetData);
-      XLSX.utils.book_append_sheet(workbook, sheet, `Piso ${piso}`);
-    });
-
-    // Generar archivo Excel
-    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
-    saveAs(blob, "Sistemas.xlsx");
+  
+      const allLocationsSheet = XLSX.utils.json_to_sheet(allLocationsSheetData);
+      XLSX.utils.book_append_sheet(workbook, allLocationsSheet, "Todas las Locaciones");
+  
+      // **Procesar cada locación**
+      locations.forEach((location) => {
+        // Crear hoja para la locación con los activos
+        const assetsSheetData = location.assets.map((asset) => ({
+          "ID Activo": asset.id,
+          "Descripción": asset.descripcion,
+          "Marca": asset.marca,
+          "Modelo": asset.modelo,
+          "Número de Serie": asset.numero_de_serie,
+          "Número de Activo": asset.numero_de_activo,
+          "COG": asset.cog,
+          "Resguardante": asset.resguardante,
+          "Estado": asset.status ? "Activo" : "Inactivo",
+        }));
+  
+        const assetsSheet = XLSX.utils.json_to_sheet(assetsSheetData);
+        XLSX.utils.book_append_sheet(workbook, assetsSheet, `Locación ${location.id} - Activos`);
+  
+        // **Procesar cada activo dentro de la locación**
+        location.assets.forEach((asset) => {
+          const sheetData = [];
+  
+          // Tabla de Observaciones
+          sheetData.push(["Observaciones"]);
+          sheetData.push([
+            "ID Observación",
+            "Observación",
+            "Fecha de Observación",
+            "Observado por",
+          ]);
+          asset.observations.forEach((observation) => {
+            sheetData.push([
+              observation.id,
+              observation.observation,
+              observation.observed_at,
+              observation.observed_by,
+            ]);
+          });
+  
+          // Espacio entre tablas
+          sheetData.push([]);
+          sheetData.push([]);
+  
+          // Tabla de Mantenimientos
+          sheetData.push(["Mantenimientos"]);
+          sheetData.push([
+            "ID Mantenimiento",
+            "Fecha de Mantenimiento",
+            "Descripción",
+            "Costo",
+            "Realizado por",
+            "Creado por",
+          ]);
+          asset.maintenances.forEach((maintenance) => {
+            sheetData.push([
+              maintenance.id,
+              maintenance.maintenance_date,
+              maintenance.description,
+              maintenance.cost,
+              maintenance.performed_by,
+              maintenance.created_by,
+            ]);
+          });
+  
+          // Crear hoja para el activo
+          const assetSheet = XLSX.utils.aoa_to_sheet(sheetData);
+          XLSX.utils.book_append_sheet(workbook, assetSheet, `Activo ${asset.id}`);
+        });
+      });
+  
+      // Generar archivo Excel
+      const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+      const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+      saveAs(blob, "Sistemas_Detallado.xlsx");
+      console.log("Archivo Excel generado correctamente.");
+    } catch (error) {
+      console.error("Error al exportar a Excel:", error);
+    }
   };
+  
 
   
   const handleAddLocation = async () => {
