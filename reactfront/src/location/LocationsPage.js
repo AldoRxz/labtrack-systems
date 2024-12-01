@@ -9,6 +9,11 @@ import { deepOrange } from "@mui/material/colors";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
+import Paper from "@mui/material/Paper";
+import InputBase from "@mui/material/InputBase";
+import IconButton from "@mui/material/IconButton";
+import SearchIcon from "@mui/icons-material/Search";
+
 
 const LocationsPage = () => {
   const [locations, setLocations] = useState([]);
@@ -23,6 +28,10 @@ const LocationsPage = () => {
   const [editLocation, setEditLocation] = useState({});
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+
+  const [searchQuery, setSearchQuery] = useState(""); 
+  const [assets, setAssets] = useState([]); 
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -58,7 +67,7 @@ const LocationsPage = () => {
   const handleExportToExcel = async () => {
     try {
       // Realizar la petición a la URL para obtener los datos
-      const response = await axios.get("http://localhost:3000/api/locations/details");
+      const response = await axios.get("/locations/details");
       const locations = response.data;
   
       // Crear un libro de Excel
@@ -156,6 +165,32 @@ const LocationsPage = () => {
     }
   };
   
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) {
+      alert("Por favor, ingrese un término de búsqueda.");
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `/locations/search?query=${encodeURIComponent(
+          searchQuery
+        )}`
+      );
+      const data = response.data;
+
+      const allAssets = data.flatMap((location) => location.assets || []);
+      setAssets(allAssets); 
+      setLocations(data); 
+    } catch (error) {
+      console.error("Error al realizar la búsqueda:", error);
+    }
+  };
+
+  const handleGoToLocation = (locationId) => {
+    // Redirige al usuario a la página de detalles de la locación
+    navigate(`/locations/${locationId}`);
+  };
 
   
   const handleAddLocation = async () => {
@@ -275,6 +310,94 @@ const LocationsPage = () => {
         </h1>
       </div>
 
+      <div className="container mt-4">
+      <div className="d-flex justify-content-center mb-3">
+        <Paper
+          component="form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSearch();
+          }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            width: 400,
+          }}
+        >
+          <InputBase
+            style={{ marginLeft: 8, flex: 1 }}
+            placeholder="Buscar locación"
+            inputProps={{ "aria-label": "buscar locación" }}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <IconButton
+            type="button"
+            style={{ padding: 10 }}
+            aria-label="search"
+            onClick={handleSearch}
+          >
+            <SearchIcon />
+          </IconButton>
+        </Paper>
+      </div>
+
+      {/* Tabla de Assets */}
+      {assets.length > 0 ? (
+        <div>
+          <h2 className="text-center">Assets Encontrados</h2>
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Descripción</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Número de Serie</th>
+                <th>Estado</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {assets.map((asset) => (
+                <tr key={asset.id}>
+                  <td>{asset.id}</td>
+                  <td>{asset.descripcion}</td>
+                  <td>{asset.marca}</td>
+                  <td>{asset.modelo}</td>
+                  <td>{asset.numero_de_serie}</td>
+                  <td>{asset.status ? "Activo" : "Inactivo"}</td>
+                  <td>
+                    <button
+                      className="btn btn-primary btn-sm"
+                      onClick={() => handleGoToLocation(asset.location_id)}
+                    >
+                      Ir
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        // eslint-disable-next-line
+        <h5 className="text-center mt-4"></h5>
+      )}
+    </div>
+
+
+      {/* Botón para exportar a Excel */}
+      <div>
+      <button
+        className="btn btn-success mb-3"
+          onClick={handleExportToExcel}
+        >
+          Exportar toda la información a Excel
+      </button>
+      </div>
+
+
       <button
         className="btn btn-primary mb-3"
         onClick={() => setShowAddModal(true)}
@@ -357,13 +480,6 @@ const LocationsPage = () => {
           </div>
         ))}
 
-        {/* Botón para exportar a Excel */}
-        <button
-          className="btn btn-success mb-3"
-          onClick={handleExportToExcel}
-        >
-          Exportar a Excel
-        </button>
 
       {showAddModal && (
         <div className="modal show d-block" tabIndex="-1">
