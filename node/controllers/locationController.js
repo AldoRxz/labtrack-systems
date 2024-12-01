@@ -159,6 +159,7 @@ export const searchAssets = async (req, res) => {
                             { descripcion: { [Op.like]: `%${query}%` } },
                             { marca: { [Op.like]: `%${query}%` } },
                             { modelo: { [Op.like]: `%${query}%` } },
+                            { numero_de_serie: { [Op.like]: `%${query}%` } },
                         ],
                     },
                 },
