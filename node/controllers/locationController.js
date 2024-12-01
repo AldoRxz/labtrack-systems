@@ -4,6 +4,9 @@ import { Asset } from '../models/Asset.js';
 import { ObservationHistory} from '../models/ObservationHistory.js';
 import { MaintenanceRecord} from '../models/MaintenanceRecord.js';
 
+import { Op } from 'sequelize';
+
+
 
 export const getAllLocations = async (req, res) => {
     try {
@@ -134,3 +137,42 @@ export const getLocationDetailsById = async (req, res) => {
         res.status(500).json({ error: 'Error al obtener la ubicación con detalles' });
     }
 };
+
+
+
+export const searchAssets = async (req, res) => {
+    try {
+        const { query } = req.query;
+
+        if (!query || query.trim() === '') {
+            return res.status(400).json({ error: 'El término de búsqueda no puede estar vacío' });
+        }
+
+        const locations = await Location.findAll({
+            include: [
+                {
+                    model: Asset,
+                    as: 'assets',
+                    required: true, // Solo incluye locaciones con activos coincidentes
+                    where: {
+                        [Op.or]: [
+                            { descripcion: { [Op.like]: `%${query}%` } },
+                            { marca: { [Op.like]: `%${query}%` } },
+                            { modelo: { [Op.like]: `%${query}%` } },
+                        ],
+                    },
+                },
+            ],
+        });
+
+        if (locations.length === 0) {
+            return res.status(404).json({ message: 'No se encontraron resultados en los activos' });
+        }
+
+        res.json(locations);
+    } catch (error) {
+        console.error('Error en la búsqueda de activos:', error);
+        res.status(500).json({ error: 'Error al realizar la búsqueda en activos' });
+    }
+};
+
