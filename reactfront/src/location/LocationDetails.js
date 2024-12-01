@@ -16,12 +16,12 @@ import {
 
 const LocationDetails = () => {
   const { id } = useParams();
-  const [username, setUsername] = useState(""); // Nombre del usuario
+  const [username, setUsername] = useState(""); 
 
   const navigate = useNavigate();
   const [location, setLocation] = useState(null);
-  const [showAddModal, setShowAddModal] = useState(false); // Modal para agregar equipo
-  const [showEditModal, setShowEditModal] = useState(false); // Modal para editar equipo
+  const [showAddModal, setShowAddModal] = useState(false); 
+  const [showEditModal, setShowEditModal] = useState(false); 
   
   const [newAsset, setNewAsset] = useState({
     descripcion: "",
@@ -33,10 +33,10 @@ const LocationDetails = () => {
     status: true,
   });
 
-  const [selectedAsset, setSelectedAsset] = useState(null); // Equipo seleccionado para editar
-  const [drawerOpen, setDrawerOpen] = useState(false); // Estado para el SwipeableDrawer
+  const [selectedAsset, setSelectedAsset] = useState(null); 
+  const [drawerOpen, setDrawerOpen] = useState(false); 
   
-  const [observationsDrawerOpen, setObservationsDrawerOpen] = useState(false); // Estado para el SwipeableDrawer de observaciones
+  const [observationsDrawerOpen, setObservationsDrawerOpen] = useState(false);
   const [observations, setObservations] = useState([]);
   const [showAddObservation, setShowAddObservation] = useState(false);
   const [selectedObservationId, setSelectedObservationId] = useState(null);
@@ -46,7 +46,7 @@ const LocationDetails = () => {
   });
 
   
-  const [selectedMaintenanceId, setSelectedMaintenanceId] = useState(null); // ID del mantenimiento seleccionado
+  const [selectedMaintenanceId, setSelectedMaintenanceId] = useState(null); 
   const [newMaintenance, setNewMaintenance] = useState({
     description: "",
     cost: "",
@@ -59,8 +59,8 @@ const LocationDetails = () => {
 
 
   const [filters, setFilters] = useState({
-    status: "", // Activo o Inactivo
-    type: "", // Tipo de equipo
+    status: "", 
+    type: "", 
   });
   const [showFilters, setShowFilters] = useState(false);
 
@@ -82,7 +82,7 @@ const LocationDetails = () => {
 
     if (!token) {
       alert("Debes iniciar sesión para acceder a esta página.");
-      navigate("/"); // Redirects to login if token is missing
+      navigate("/"); 
       return;
     }
     setUsername(savedUsername);
@@ -114,7 +114,7 @@ const LocationDetails = () => {
       // Asegúrate de incluir el campo "location_id"
       const assetData = {
         ...newAsset,
-        location_id: id, // Asociar el equipo con la locación actual
+        location_id: id, 
       };
   
       console.log("Datos enviados al backend:", assetData);
@@ -144,7 +144,7 @@ const LocationDetails = () => {
     try {
       // Realiza la solicitud PUT al backend para actualizar el equipo
       const response = await axios.put(
-        `/assets/${selectedAsset.id}`, // Cambia la ruta para reflejar la API correcta
+        `/assets/${selectedAsset.id}`, 
         selectedAsset
       );
   
@@ -172,7 +172,7 @@ const LocationDetails = () => {
     }
     try {
       // Realiza la solicitud DELETE al backend para eliminar el equipo
-      await axios.delete(`/assets/${assetId}`); // Cambia la ruta para reflejar la API correcta
+      await axios.delete(`/assets/${assetId}`); 
   
       // Actualiza el estado del componente eliminando el equipo de la lista
       setLocation({
@@ -212,7 +212,7 @@ const LocationDetails = () => {
     try {
       setSelectedAsset(asset);
       const response = await axios.get(`/assets/${asset.id}`);
-      setObservations(response.data.observations || []); // Asumimos que la API devuelve un campo 'observations'
+      setObservations(response.data.observations || []); 
       setObservationsDrawerOpen(true);
     } catch (error) {
       console.error("Error fetching observations:", error);
@@ -279,8 +279,8 @@ const LocationDetails = () => {
   
       // Limpia el formulario
       setNewObservation({ observation: '', observed_by: '' });
-      setSelectedObservationId(null); // Limpia el ID seleccionado
-      setShowAddObservation(false); // Cierra el formulario
+      setSelectedObservationId(null); 
+      setShowAddObservation(false); 
     } catch (error) {
       console.error("Error al actualizar la observación:", error);
       alert('Error al actualizar la observación.');
@@ -292,8 +292,8 @@ const LocationDetails = () => {
       observation: observation.observation,
       observed_by: observation.observed_by,
     });
-    setSelectedObservationId(observation.id); // Guarda el ID de la observación a editar
-    setShowAddObservation(true); // Abre el formulario
+    setSelectedObservationId(observation.id); 
+    setShowAddObservation(true); 
   };
   
 
@@ -316,9 +316,9 @@ const LocationDetails = () => {
   // Abrir y cerrar detalles de mantenimientos
   const handleOpenMaintenances = async (asset) => {
     try {
-      setSelectedAsset(asset); // Establece el equipo seleccionado
+      setSelectedAsset(asset); 
       const response = await axios.get(`/assets/${asset.id}`);
-      setMaintenances(response.data.maintenances || []); // Obtén mantenimientos del equipo
+      setMaintenances(response.data.maintenances || []); 
       setMaintenancesDrawerOpen(true);
     } catch (error) {
       console.error("Error al obtener los mantenimientos:", error);
@@ -347,7 +347,7 @@ const LocationDetails = () => {
 
     try {
       const response = await axios.post('/maintenance-records', payload);
-      setMaintenances((prevMaintenances) => [...prevMaintenances, response.data]); // Agregar nuevo mantenimiento
+      setMaintenances((prevMaintenances) => [...prevMaintenances, response.data]); 
 
       // Cambia el estado del asset a inactivo
       await axios.put(`/assets/${selectedAsset.id}`, { ...selectedAsset, status: false });
@@ -358,7 +358,7 @@ const LocationDetails = () => {
         ),
       }));
 
-      setNewMaintenance({ description: "", cost: "", performed_by: "" }); // Restablecer formulario
+      setNewMaintenance({ description: "", cost: "", performed_by: "" }); 
       setShowAddMaintenance(false); // Cerrar modal
       alert('Mantenimiento guardado exitosamente.');
 
@@ -409,8 +409,8 @@ const LocationDetails = () => {
       cost: maintenance.cost,
       performed_by: maintenance.performed_by,
     });
-    setSelectedMaintenanceId(maintenance.id); // Establece el ID del mantenimiento a editar
-    setShowAddMaintenance(true); // Abre el formulario de mantenimiento
+    setSelectedMaintenanceId(maintenance.id); 
+    setShowAddMaintenance(true); 
   };
 
   // Eliminar un mantenimiento
@@ -440,7 +440,7 @@ const LocationDetails = () => {
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between", // Distribuir el espacio entre título y usuario
+          justifyContent: "space-between", 
           alignItems: "center",
           marginBottom: "20px",
         }}
@@ -452,7 +452,7 @@ const LocationDetails = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            marginLeft: "auto", // Empuja al lado derecho
+            marginLeft: "auto", 
           }}
         >
           <Avatar
@@ -483,9 +483,9 @@ const LocationDetails = () => {
         {/* Título */}
         <h1
           style={{
-            position: "absolute", // Usa posición absoluta para centrarlo
+            position: "absolute",
             left: "50%",
-            transform: "translateX(-50%)", // Mueve el título a la posición centrada
+            transform: "translateX(-50%)", 
             fontWeight: "bold",
             margin: 0,
           }}
@@ -499,7 +499,7 @@ const LocationDetails = () => {
       {location.classroom && (
         <div className="text-center my-4">
           <img
-            src={`/classrooms/${location.classroom}.png`} // Ruta de la imagen basada en el campo classroom
+            src={`/classrooms/${location.classroom}.png`} 
             alt={`Classroom ${location.classroom}`}
             className="img-fluid"
             style={{
@@ -577,16 +577,16 @@ const LocationDetails = () => {
 
       <div className="d-flex justify-content-between align-items-center my-4">
         <h2>Equipos</h2>
-        <button
-          className="btn btn-success"
-          onClick={() => setShowAddModal(true)}
-        >
-          Agregar Nuevo Equipo
-        </button>
-       
-        <div>
+        <div className="d-flex flex-column align-items-end">
+          <button
+            className="btn btn-success mb-3" // Agrega margen inferior para separar el botón de los filtros
+            onClick={() => setShowAddModal(true)}
+          >
+            Agregar Nuevo Equipo
+          </button>
+          <div className="d-flex gap-2">
             <button
-              className="btn btn-secondary me-2"
+              className="btn btn-secondary"
               onClick={() => setFilters({ status: "", type: "" })}
             >
               Limpiar Filtros
@@ -599,6 +599,7 @@ const LocationDetails = () => {
             </button>
           </div>
         </div>
+      </div>
         {showFilters && (
           <div className="row g-3 mb-4">
             <div className="col-md-6">
@@ -1032,10 +1033,10 @@ const LocationDetails = () => {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            height: "100vh", // Asegura que cubra toda la ventana
-            bgcolor: "#2b2f38", // Fondo oscuro
-            color: "#ffffff", // Texto claro
-            overflowY: "auto", // Permite scroll si el contenido es demasiado alto
+            height: "100vh",
+            bgcolor: "#2b2f38", 
+            color: "#ffffff",
+            overflowY: "auto", 
           }}
         >
           {selectedAsset ? (
@@ -1131,10 +1132,10 @@ const LocationDetails = () => {
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              height: "100vh", // Asegura que cubra toda la ventana
-              bgcolor: "#2b2f38", // Fondo oscuro
-              color: "#ffffff", // Texto claro
-              overflowY: "auto", // Permite scroll si el contenido es demasiado alto
+              height: "100vh", 
+              bgcolor: "#2b2f38", 
+              color: "#ffffff", 
+              overflowY: "auto", 
             }}
           >
             <Box>
@@ -1326,13 +1327,13 @@ const LocationDetails = () => {
               variant="contained"
               sx={{
                 mb: 2,
-                bgcolor: selectedAsset?.status ? "#61dafb" : "#ccc", // Color de fondo dinámico
-                color: selectedAsset?.status ? "#000" : "#666", // Texto más claro si está activo
+                bgcolor: selectedAsset?.status ? "#61dafb" : "#ccc", 
+                color: selectedAsset?.status ? "#000" : "#666", 
                 fontWeight: "bold",
-                cursor: selectedAsset?.status ? "pointer" : "not-allowed", // Cursor "not-allowed" si está inactivo
-                ":hover": selectedAsset?.status ? { bgcolor: "#50b5e8" } : {}, // Desactiva el hover si está inactivo
+                cursor: selectedAsset?.status ? "pointer" : "not-allowed", 
+                ":hover": selectedAsset?.status ? { bgcolor: "#50b5e8" } : {}, 
               }}
-              disabled={!selectedAsset?.status} // Deshabilita si el estado es inactivo
+              disabled={!selectedAsset?.status} 
               onClick={() => setShowAddMaintenance(true)}
             >
               Agregar Nuevo Mantenimiento
@@ -1343,7 +1344,7 @@ const LocationDetails = () => {
                 variant="contained"
                 sx={{
                   mb: 2,
-                  bgcolor: "#4caf50", // Verde para acción positiva
+                  bgcolor: "#4caf50", 
                   color: "#fff",
                   fontWeight: "bold",
                   ":hover": { bgcolor: "#43a047" },

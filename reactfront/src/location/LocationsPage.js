@@ -35,11 +35,11 @@ const LocationsPage = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const savedUsername = localStorage.getItem("username")|| "Usuario"; // Recupera el nombre de usuario
+    const savedUsername = localStorage.getItem("username")|| "Usuario"; 
 
     if (!token) {
       alert("Debes iniciar sesión para acceder a esta página.");
-      navigate("/"); // Redirects to login if token is missing
+      navigate("/"); 
       return;
     }
     setUsername(savedUsername);
@@ -58,15 +58,14 @@ const LocationsPage = () => {
 
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Elimina el token
-    localStorage.removeItem("username"); // Elimina el nombre de usuario
-    navigate("/"); // Redirige al login
+    localStorage.removeItem("token"); 
+    localStorage.removeItem("username"); 
+    navigate("/"); 
   };
 
 
   const handleExportToExcel = async () => {
     try {
-      // Realizar la petición a la URL para obtener los datos
       const response = await axios.get("/locations/details");
       const locations = response.data;
   
@@ -188,7 +187,6 @@ const LocationsPage = () => {
   };
 
   const handleGoToLocation = (locationId) => {
-    // Redirige al usuario a la página de detalles de la locación
     navigate(`/locations/${locationId}`);
   };
 
@@ -257,7 +255,7 @@ const LocationsPage = () => {
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between", // Distribuye el espacio entre los elementos
+          justifyContent: "space-between", 
           alignItems: "center",
         }}
       >
@@ -299,9 +297,9 @@ const LocationsPage = () => {
         {/* Título */}
         <h1
           style={{
-            position: "absolute", // Usa posición absoluta para centrarlo
+            position: "absolute", 
             left: "50%",
-            transform: "translateX(-50%)", // Mueve el título a la posición centrada
+            transform: "translateX(-50%)", 
             fontWeight: "bold",
             margin: 0,
           }}
@@ -412,23 +410,23 @@ const LocationsPage = () => {
             <h2 className="text-center">Piso {piso}</h2>
 
             {/* Mostrar imagen según el piso */}
-            {piso === "1" && ( // Comparación estricta con cadena
+            {piso === "1" && ( 
               <div className="text-center">
                 <img
                   src="/planta_baja.png"
                   alt="Planta Baja"
                   className="img-fluid mb-4"
-                  style={{ maxWidth: "600px", height: "auto" }} // Cambia el tamaño de la imagen
+                  style={{ maxWidth: "600px", height: "auto" }} 
                 />
               </div>
             )}
-            {piso === "2" && ( // Comparación estricta con cadena
+            {piso === "2" && ( 
               <div className="text-center">
                 <img
                   src="/planta_alta.png"
                   alt="Planta Alta"
                   className="img-fluid mb-4"
-                  style={{ maxWidth: "600px", height: "auto" }} // Cambia el tamaño de la imagen
+                  style={{ maxWidth: "600px", height: "auto" }} 
                 />
               </div>
             )}
