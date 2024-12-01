@@ -326,8 +326,8 @@ const LocationsPage = () => {
         >
           <InputBase
             style={{ marginLeft: 8, flex: 1 }}
-            placeholder="Buscar locación"
-            inputProps={{ "aria-label": "buscar locación" }}
+            placeholder="Buscar equipo"
+            inputProps={{ "aria-label": "Buscar equipo" }}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />

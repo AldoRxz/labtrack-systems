@@ -58,6 +58,24 @@ const LocationDetails = () => {
   const [showAddMaintenance, setShowAddMaintenance] = useState(false);
 
 
+  const [filters, setFilters] = useState({
+    status: "", // Activo o Inactivo
+    type: "", // Tipo de equipo
+  });
+  const [showFilters, setShowFilters] = useState(false);
+
+  const filteredAssets =
+  location && location.assets
+    ? location.assets.filter((asset) => {
+        const matchesStatus =
+          filters.status === "" || asset.status.toString() === filters.status;
+        const matchesType = filters.type === "" || asset.icon === filters.type;
+        return matchesStatus && matchesType;
+      })
+    : [];
+
+
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     const savedUsername = localStorage.getItem("username") || "Usuario";
@@ -565,90 +583,152 @@ const LocationDetails = () => {
         >
           Agregar Nuevo Equipo
         </button>
+       
+        <div>
+            <button
+              className="btn btn-secondary me-2"
+              onClick={() => setFilters({ status: "", type: "" })}
+            >
+              Limpiar Filtros
+            </button>
+            <button
+              className="btn btn-primary"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              {showFilters ? "Ocultar Filtros" : "Mostrar Filtros"}
+            </button>
+          </div>
+        </div>
+        {showFilters && (
+          <div className="row g-3 mb-4">
+            <div className="col-md-6">
+              <label className="form-label" style={{ color: "#61dafb" }}>
+                Estado
+              </label>
+              <select
+                className="form-control"
+                value={filters.status}
+                onChange={(e) =>
+                  setFilters({ ...filters, status: e.target.value })
+                }
+              >
+                <option value="">Todos</option>
+                <option value="true">Activo</option>
+                <option value="false">Inactivo</option>
+              </select>
+            </div>
+            <div className="col-md-6">
+              <label className="form-label" style={{ color: "#61dafb" }}>
+                Tipo
+              </label>
+              <select
+                className="form-control"
+                value={filters.type}
+                onChange={(e) => setFilters({ ...filters, type: e.target.value })}
+              >
+                <option value="">Todos</option>
+                <option value="fa-display">Monitor</option>
+                <option value="fa-computer">Computadora All-in</option>
+                <option value="fa-phone">Teléfono</option>
+                <option value="fa-mattress-pillow">Cortina</option>
+                <option value="fa-bolt">Regulador de Voltaje</option>
+                <option value="fa-laptop">Laptop</option>
+                <option value="fa-print">Impresora</option>
+                <option value="fa-chalkboard-user">Pizarrón Proyector</option>
+                <option value="fa-tv">Televisión</option>
+                <option value="fa-fingerprint">Reloj Checador</option>
+                <option value="fa-volume-high">Bocina</option>
+                <option value="fa-house-signal">Modem Wifi</option>
+              </select>
+            </div>
+        
       </div>
+      )}
+      
 
-      {location.assets && location.assets.length > 0 ? (
+      {filteredAssets.length > 0 ? (
         <table className="table table-dark table-hover">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Tipo</th> {/* Actualización para mostrar el ícono */}
-            <th>Descripción</th>
-            <th>Marca</th>
-            <th>Modelo</th>
-            <th>Resguardante</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-            <th>Detalles</th> {/* Nuevo campo */}
-            <th>Observaciones</th> {/* Nuevo campo */}
-            <th>Mantenimientos</th> {/* Nuevo campo */}
-          </tr>
-        </thead>
-        <tbody>
-          {location.assets.map((asset) => (
-            <tr key={asset.id}>
-              <td>{asset.id}</td>
-              <td>
-                <i className={`fa-solid ${asset.icon} fa-2x`} style={{ color: "#61dafb" }}></i>
-              </td> {/* Se muestra el ícono aquí */}
-              <td>{asset.descripcion}</td>
-              <td>{asset.marca}</td>
-              <td>{asset.modelo}</td>
-              <td>{asset.resguardante}</td>
-              <td style={{ color: asset.status ? "blue" : "red" }}>
-                {asset.status ? "Activo" : "Inactivo"}
-              </td>
-              <td>
-                <button
-                  className="btn btn-warning btn-sm me-2"
-                  onClick={() => {
-                    setSelectedAsset(asset);
-                    setShowEditModal(true);
-                  }}
-                >
-                  <i className="fa-solid fa-pen-to-square"></i>
-                </button>
-                <button
-                  className="btn btn-danger btn-sm"
-                  onClick={() => handleDeleteAsset(asset.id)}
-                >
-                  <i className="fa-solid fa-trash"></i>
-                </button>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Tipo</th>
+              <th>Descripción</th>
+              <th>Marca</th>
+              <th>Modelo</th>
+              <th>Resguardante</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+              <th>Detalles</th>
+              <th>Observaciones</th>
+              <th>Mantenimientos</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredAssets.map((asset) => (
+              <tr key={asset.id}>
+                <td>{asset.id}</td>
+                <td>
+                  <i
+                    className={`fa-solid ${asset.icon} fa-2x`}
+                    style={{ color: "#61dafb" }}
+                  ></i>
                 </td>
-                {/* Nuevo botón "Ver Más Detalles" */}
+                <td>{asset.descripcion}</td>
+                <td>{asset.marca}</td>
+                <td>{asset.modelo}</td>
+                <td>{asset.resguardante}</td>
+                <td style={{ color: asset.status ? "blue" : "red" }}>
+                  {asset.status ? "Activo" : "Inactivo"}
+                </td>
+                <td>
+                  <button
+                    className="btn btn-warning btn-sm me-2"
+                    onClick={() => {
+                      setSelectedAsset(asset);
+                      setShowEditModal(true);
+                    }}
+                  >
+                    <i className="fa-solid fa-pen-to-square"></i>
+                  </button>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => handleDeleteAsset(asset.id)}
+                  >
+                    <i className="fa-solid fa-trash"></i>
+                  </button>
+                </td>
                 <td>
                   <button
                     className="btn btn-info btn-sm"
-                    onClick={() => handleOpenDetails(asset)}                  >
-                    <i class="fa-solid fa-info"></i>
+                    onClick={() => handleOpenDetails(asset)}
+                  >
+                    <i className="fa-solid fa-info"></i>
                   </button>
                 </td>
-                {/* Nuevo botón "Observaciones" */}
                 <td>
                   <button
                     className="btn btn-secondary btn-sm"
-                    onClick={() => handleOpenObservations(asset)} 
+                    onClick={() => handleOpenObservations(asset)}
                   >
-                    <i class="fa-regular fa-eye"></i>
+                    <i className="fa-regular fa-eye"></i>
                   </button>
                 </td>
-                {/* Nuevo botón "Mantenimientos" */}
                 <td>
                   <button
                     className="btn btn-primary btn-sm"
                     onClick={() => handleOpenMaintenances(asset)}
-                    >
-                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                  >
+                    <i className="fa-solid fa-screwdriver-wrench"></i>
                   </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-      
       ) : (
-        <p>No hay equipos en esta locación.</p>
+        <p>No hay equipos que coincidan con los filtros seleccionados.</p>
       )}
+
 
       <Link to="/locations" className="btn btn-primary mt-4">
         Volver a Locaciones
