@@ -676,6 +676,14 @@ const LocationDetails = () => {
             <i className="fa-solid fa-video fa-2x" style={{ color: "#61dafb" }}></i>
             <p className="mt-2">Proyector</p>
           </div>
+          <div>
+            <i className="fa-solid fa-chair fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Silla</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-box-archive fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Archivero</p>
+          </div>
         </div>
       </div>
 
@@ -746,6 +754,8 @@ const LocationDetails = () => {
                 <option value="fa-volume-high">Bocina</option>
                 <option value="fa-house-signal">Modem Wifi</option>
                 <option value="fa-video">Proyector</option>
+                <option value="fa-chair">Silla</option>
+                <option value="fa-box-archive">Archivero</option>
               </select>
             </div>
         
@@ -953,6 +963,8 @@ const LocationDetails = () => {
                     <option value="fa-volume-high">Bocina</option>
                     <option value="fa-house-signal">Modem Wifi</option>
                     <option value="fa-video">Proyector</option>
+                    <option value="fa-chair">Silla</option>
+                    <option value="fa-box-archive">Archivero</option>
                   </select>
                 </div>
               </div>
@@ -1104,6 +1116,8 @@ const LocationDetails = () => {
                     <option value="fa-volume-high">Bocina</option>
                     <option value="fa-house-signal">Modem Wifi</option>
                     <option value="fa-video">Proyector</option>
+                    <option value="fa-chair">Silla</option>
+                    <option value="fa-box-archive">Archivero</option>
                   </select>
                 </div>
               </div>
