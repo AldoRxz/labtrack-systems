@@ -116,86 +116,51 @@ const LocationDetails = () => {
 
   const handleExportToExcel = async () => {
     try {
-      console.log("Iniciando solicitud de datos...");
-  
-      // Realizar la solicitud GET para obtener los datos
       const response = await axios.get(`/locations/details/${id}`);
-      const locations = response.data;
-      console.log("Datos recibidos:", locations);
+      const data = response.data;
   
-      // Crear un libro de Excel
-      const workbook = XLSX.utils.book_new();
-      console.log("Libro de Excel creado.");
-  
-      // **Hoja General de Locaciones**
-      const allLocationsSheetData = locations.map((location) => ({
-        "ID Locación": location.id,
-        "Nombre": location.name,
-        "Descripción": location.description,
-        "Piso": location.piso,
-        "Aula": location.classroom,
+      // Procesa los datos para Excel
+      const locationInfo = [
+        {
+          "Location ID": data.id,
+          "Location Name": data.name,
+          "Description": data.description,
+          "Classroom": data.classroom,
+          "Floor": data.piso,
+        },
+      ];
+
+      const assets = data.assets.map(asset => ({
+        "Asset ID": asset.id,
+        "Description": asset.descripcion,
+        "Brand": asset.marca,
+        "Model": asset.modelo,
+        "Serial Number": asset.numero_de_serie,
+        "Active Number": asset.numero_de_activo,
+        "COG": asset.cog,
+        "Custodian": asset.resguardante,
+        "Status": asset.status ? "Active" : "Inactive",
+        "Icon": asset.icon,
+        "Observations": asset.observations.map(obs => `${obs.observation} (by ${obs.observed_by} at ${obs.observed_at})`).join("; "),
+        "Maintenances": asset.maintenances.map(maint => `${maint.description} on ${maint.maintenance_date} (Cost: ${maint.cost})`).join("; "),
       }));
-  
-      const allLocationsSheet = XLSX.utils.json_to_sheet(allLocationsSheetData);
-      XLSX.utils.book_append_sheet(workbook, allLocationsSheet, "Todas las Locaciones");
-      console.log("Hoja general de locaciones añadida.");
-  
-      // **Procesar cada locación**
-      locations.forEach((location) => {
-        // Hoja para activos de la locación
-        const assetsSheetData = location.assets.map((asset) => ({
-          "ID Activo": asset.id,
-          "Descripción": asset.descripcion,
-          "Marca": asset.marca,
-          "Modelo": asset.modelo,
-          "Número de Serie": asset.numero_de_serie,
-          "Número de Activo": asset.numero_de_activo,
-          "COG": asset.cog,
-          "Resguardante": asset.resguardante,
-          "Estado": asset.status ? "Activo" : "Inactivo",
-        }));
-  
-        const assetsSheet = XLSX.utils.json_to_sheet(assetsSheetData);
-        XLSX.utils.book_append_sheet(workbook, assetsSheet, `Locación ${location.id} - Activos`);
-        console.log(`Hoja creada para la locación ${location.id}.`);
-  
-        // Procesar cada activo
-        location.assets.forEach((asset) => {
-          const sheetData = [
-            ["Observaciones"],
-            ["ID Observación", "Observación", "Fecha de Observación", "Observado por"],
-            ...asset.observations.map((obs) => [
-              obs.id,
-              obs.observation,
-              obs.observed_at,
-              obs.observed_by,
-            ]),
-            [],
-            ["Mantenimientos"],
-            ["ID Mantenimiento", "Fecha", "Descripción", "Costo", "Realizado por", "Creado por"],
-            ...asset.maintenances.map((maint) => [
-              maint.id,
-              maint.maintenance_date,
-              maint.description,
-              maint.cost,
-              maint.performed_by,
-              maint.created_by,
-            ]),
-          ];
-  
-          const assetSheet = XLSX.utils.aoa_to_sheet(sheetData);
-          XLSX.utils.book_append_sheet(workbook, assetSheet, `Activo ${asset.id}`);
-          console.log(`Hoja creada para el activo ${asset.id}.`);
-        });
-      });
-  
-      // Generar y descargar el archivo Excel
-      const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+
+      // Crea un libro y hojas de Excel
+      const excelWorkbook = XLSX.utils.book_new();
+      const locationSheet = XLSX.utils.json_to_sheet(locationInfo);
+      const assetsSheet = XLSX.utils.json_to_sheet(assets);
+
+      XLSX.utils.book_append_sheet(excelWorkbook, locationSheet, "Location Info");
+      XLSX.utils.book_append_sheet(excelWorkbook, assetsSheet, "Assets");
+
+      // Genera el archivo Excel
+      const excelBuffer = XLSX.write(excelWorkbook, { bookType: 'xlsx', type: 'array' });
       const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
-      saveAs(blob, "Detalles_Locaciones.xlsx");
-      console.log("Archivo Excel generado y guardado correctamente.");
+
+      // Descarga el archivo
+      saveAs(blob, `location_details_${data.id}.xlsx`);
     } catch (error) {
-      console.error("Error al exportar a Excel:", error);
+      console.error("Error al generar el archivo Excel:", error);
     }
   };
 

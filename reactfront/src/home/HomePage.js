@@ -36,7 +36,7 @@ const LoginPage = () => {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <img src="/inicio/tecmm.jpeg" alt="TecMM Logo" style={styles.logo} />
+        <img src="/inicio/tecmm.png" alt="TecMM Logo" style={styles.logo} />
         <h1 style={styles.title}>Iniciar Sesión</h1>
         <p style={styles.subtitle}>Accede para gestionar tus equipos y locaciones</p>
         <div style={styles.form}>
@@ -68,10 +68,10 @@ const LoginPage = () => {
       </div>
       <footer style={styles.footer}>
         <div style={styles.logoContainer}>
-          <img src="/inicio/secretaria.jpeg" alt="Educación" style={styles.footerLogo} />
-          <img src="/inicio/jalisco.jpeg" alt="Jalisco" style={styles.footerLogo} />
-          <img src="/inicio/inovacion.jpeg" alt="Innovación" style={styles.footerLogo} />
-          <img src="/inicio/tecnologico.jpeg" alt="Tecnológico Nacional de México" style={styles.footerLogo} />
+          <img src="/inicio/educacion.png" alt="Educación" style={styles.footerLogo} />
+          <img src="/inicio/jalisco.png" alt="Jalisco" style={styles.footerLogo} />
+          <img src="/inicio/innovacion.png" alt="Innovación" style={styles.footerLogo} />
+          <img src="/inicio/tecnologico.png" alt="Tecnológico Nacional de México" style={styles.footerLogo} />
         </div>
       </footer>
     </div>
