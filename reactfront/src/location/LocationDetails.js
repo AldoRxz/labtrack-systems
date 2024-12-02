@@ -571,6 +571,10 @@ const LocationDetails = () => {
             <i className="fa-solid fa-house-signal fa-2x" style={{ color: "#61dafb" }}></i>
             <p className="mt-2">Modem Wifi</p>
           </div>
+          <div>
+            <i className="fa-solid fa-video fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Proyector</p>
+          </div>
         </div>
       </div>
 
@@ -640,6 +644,7 @@ const LocationDetails = () => {
                 <option value="fa-fingerprint">Reloj Checador</option>
                 <option value="fa-volume-high">Bocina</option>
                 <option value="fa-house-signal">Modem Wifi</option>
+                <option value="fa-video">Proyector</option>
               </select>
             </div>
         
@@ -846,6 +851,7 @@ const LocationDetails = () => {
                     <option value="fa-fingerprint">Reloj Checador</option>
                     <option value="fa-volume-high">Bocina</option>
                     <option value="fa-house-signal">Modem Wifi</option>
+                    <option value="fa-video">Proyector</option>
                   </select>
                 </div>
               </div>
@@ -996,6 +1002,7 @@ const LocationDetails = () => {
                     <option value="fa-fingerprint">Reloj Checador</option>
                     <option value="fa-volume-high">Bocina</option>
                     <option value="fa-house-signal">Modem Wifi</option>
+                    <option value="fa-video">Proyector</option>
                   </select>
                 </div>
               </div>
