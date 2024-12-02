@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "../axios/axiosConfig";
 import { useNavigate } from "react-router-dom";
-
+import DragAndDropLayout from "../dragAndDrop/dNd";
 
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
@@ -562,25 +562,87 @@ const LocationDetails = () => {
       </div>
 
       {/* Mostrar la imagen del classroom */}
-      {location.classroom && (
-        <div className="text-center my-4">
-          <img
-            src={`/classrooms/${location.classroom}.png`} 
-            alt={`Classroom ${location.classroom}`}
-            className="img-fluid"
-            style={{
-              maxWidth: "500px",
-              height: "auto",
-              border: "2px solid #61dafb",
-              borderRadius: "10px",
-            }}
-          />
-          
-          <p className="mt-3" style={{ color: "#61dafb" }}>
-            Aula: {location.classroom}
+      <div className="text-center my-4">
+        {location.classroom === "LWI" ? (
+          <>
+          <Box sx={{ textAlign: "center", backgroundColor:"white", height:"100vh" }}>
+           <DragAndDropLayout data={location.assets} />
+          </Box>
+          </>
+        ) : location.classroom === "LTE" ? (
+          <>
+            <img
+              src="/classrooms/LTE.png"
+              alt="Classroom LTE"
+              className="img-fluid"
+              style={{
+                maxWidth: "100wh",
+                height: "100vh",
+                border: "2px solid #34a853",
+                borderRadius: "10px",
+              }}
+            />
+            <p className="mt-3" style={{ color: "#34a853" }}>
+              Aula: LTE
+            </p>
+          </>
+        ) : location.classroom === "LIA" ? (
+          <>
+            <img
+              src="/classrooms/LIA.png"
+              alt="Classroom LIA"
+              className="img-fluid"
+              style={{
+                maxWidth: "100wh",
+                height: "100vh",
+                border: "2px solid #fbbc05",
+                borderRadius: "10px",
+              }}
+            />
+            <p className="mt-3" style={{ color: "#fbbc05" }}>
+              Aula: LIA
+            </p>
+          </>
+        ) : location.classroom === "LIS" ? (
+          <>
+            <img
+              src="/classrooms/LIS.png"
+              alt="Classroom LIS"
+              className="img-fluid"
+              style={{
+                maxWidth: "100wh",
+                height: "100vh",
+                border: "2px solid #4285f4",
+                borderRadius: "10px",
+              }}
+            />
+            <p className="mt-3" style={{ color: "#4285f4" }}>
+              Aula: LIS
+            </p>
+          </>
+        ) : location.classroom === "LRD" ? (
+          <>
+            <img
+              src="/classrooms/LRD.png"
+              alt="Classroom LRD"
+              className="img-fluid"
+              style={{
+                maxWidth: "100wh",
+                height: "100vh",
+                border: "2px solid #ea4335",
+                borderRadius: "10px",
+              }}
+            />
+            <p className="mt-3" style={{ color: "#ea4335" }}>
+              Aula: LRD
+            </p>
+          </>
+        ) : (
+          <p className="mt-3" style={{ color: "red" }}>
+            Aula no reconocida
           </p>
-        </div>
-      )}
+        )}
+      </div>
 
           {/* <p className="mt-3" style={{ color: "#61dafb" }}>
             Aula: {location.classroom}
