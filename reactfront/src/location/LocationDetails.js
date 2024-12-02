@@ -586,72 +586,6 @@ const LocationDetails = () => {
             Aula: {location.classroom}
           </p> */}
 
-      <div className="container mt-4">
-        <h2 className="mb-4" style={{ color: "#61dafb" }}>Significado de los Iconos</h2>
-        <div className="d-flex flex-wrap justify-content-start text-center" style={{ gap: "2rem" }}>
-          <div>
-            <i className="fa-solid fa-display fa-2x" style={{ color: "#61dafb" }}></i>
-            <p className="mt-2">Monitor</p>
-          </div>
-          <div>
-            <i className="fa-solid fa-computer fa-2x" style={{ color: "#61dafb" }}></i>
-            <p className="mt-2">Computadora All-in</p>
-          </div>
-          <div>
-            <i className="fa-solid fa-phone fa-2x" style={{ color: "#61dafb" }}></i>
-            <p className="mt-2">Teléfono</p>
-          </div>
-          <div>
-            <i className="fa-solid fa-mattress-pillow fa-2x" style={{ color: "#61dafb" }}></i>
-            <p className="mt-2">Cortina</p>
-          </div>
-          <div>
-            <i className="fa-solid fa-bolt fa-2x" style={{ color: "#61dafb" }}></i>
-            <p className="mt-2">Regulador de Voltaje</p>
-          </div>
-          <div>
-            <i className="fa-solid fa-laptop fa-2x" style={{ color: "#61dafb" }}></i>
-            <p className="mt-2">Laptop</p>
-          </div>
-          <div>
-            <i className="fa-solid fa-print fa-2x" style={{ color: "#61dafb" }}></i>
-            <p className="mt-2">Impresora</p>
-          </div>
-          <div>
-            <i className="fa-solid fa-chalkboard-user fa-2x" style={{ color: "#61dafb" }}></i>
-            <p className="mt-2">Pizarrón Proyector</p>
-          </div>
-          <div>
-            <i className="fa-solid fa-tv fa-2x" style={{ color: "#61dafb" }}></i>
-            <p className="mt-2">Televisión</p>
-          </div>
-          <div>
-            <i className="fa-solid fa-fingerprint fa-2x" style={{ color: "#61dafb" }}></i>
-            <p className="mt-2">Reloj Checador</p>
-          </div>
-          <div>
-            <i className="fa-solid fa-volume-high fa-2x" style={{ color: "#61dafb" }}></i>
-            <p className="mt-2">Bocina</p>
-          </div>
-          <div>
-            <i className="fa-solid fa-house-signal fa-2x" style={{ color: "#61dafb" }}></i>
-            <p className="mt-2">Modem Wifi</p>
-          </div>
-          <div>
-            <i className="fa-solid fa-video fa-2x" style={{ color: "#61dafb" }}></i>
-            <p className="mt-2">Proyector</p>
-          </div>
-          <div>
-            <i className="fa-solid fa-chair fa-2x" style={{ color: "#61dafb" }}></i>
-            <p className="mt-2">Silla</p>
-          </div>
-          <div>
-            <i className="fa-solid fa-box-archive fa-2x" style={{ color: "#61dafb" }}></i>
-            <p className="mt-2">Archivero</p>
-          </div>
-        </div>
-      </div>
-
 
       <div className="d-flex justify-content-between align-items-center my-4">
         <h2>Equipos</h2>
@@ -723,6 +657,72 @@ const LocationDetails = () => {
                 <option value="fa-box-archive">Archivero</option>
               </select>
             </div>
+
+            <div className="container mt-4">
+        <h2 className="mb-4" style={{ color: "#61dafb" }}>Significado de los Iconos</h2>
+        <div className="d-flex flex-wrap justify-content-start text-center" style={{ gap: "2rem" }}>
+          <div>
+            <i className="fa-solid fa-display fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Monitor</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-computer fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Computadora All-in</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-phone fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Teléfono</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-mattress-pillow fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Cortina</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-bolt fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Regulador de Voltaje</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-laptop fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Laptop</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-print fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Impresora</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-chalkboard-user fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Pizarrón Proyector</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-tv fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Televisión</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-fingerprint fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Reloj Checador</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-volume-high fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Bocina</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-house-signal fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Modem Wifi</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-video fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Proyector</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-chair fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Silla</p>
+          </div>
+          <div>
+            <i className="fa-solid fa-box-archive fa-2x" style={{ color: "#61dafb" }}></i>
+            <p className="mt-2">Archivero</p>
+          </div>
+        </div>
+      </div>
         
       </div>
       )}
