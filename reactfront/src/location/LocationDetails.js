@@ -71,8 +71,8 @@ const LocationDetails = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   const filteredAssets =
-  location && location.assets
-    ? location.assets.filter((asset) => {
+  location && location.assets && location.transferredAssets
+  ? [...(location.assets || []), ...(location.transferredAssets || [])].filter((asset) => {
         const matchesStatus =
           filters.status === "" || asset.status.toString() === filters.status;
         const matchesType = filters.type === "" || asset.icon === filters.type;
@@ -485,7 +485,101 @@ const LocationDetails = () => {
   };
 
 
+  const [traceabilityDrawerOpen, setTraceabilityDrawerOpen] = useState(false); // Estado para el drawer de trazabilidad
+  const [isTraceabilityLoading, setIsTraceabilityLoading] = useState(false); // Estado de carga
+  const [traceabilityAsset, setTraceabilityAsset] = useState(null); // Estado para el equipo seleccionado
+  const [traceabilityLocation, setTraceabilityLocation] = useState(null); // Estado para guardar la locación
+
+
+
+  const handleOpenTraceability = async (asset) => {
+    setIsTraceabilityLoading(true);
+    try {
+      const response = await axios.get(`/locations/${asset.location_id}`); // Llamada a la API
+      const locationDetails = response.data;
   
+      // Encuentra el equipo dentro de la locación
+      const foundAsset = locationDetails.assets.find((a) => a.id === asset.id);
+  
+      setTraceabilityLocation(locationDetails); // Guarda los detalles de la locación
+      setTraceabilityAsset(foundAsset); // Guarda los detalles del equipo
+    } catch (error) {
+      console.error("Error al obtener los datos de trazabilidad:", error);
+      alert("Ocurrió un error al cargar los datos del equipo o locación.");
+    } finally {
+      setIsTraceabilityLoading(false);
+      setTraceabilityDrawerOpen(true); // Abre el Drawer después de cargar
+    }
+  };
+
+
+  const [locations, setLocations] = useState([]); // Estado para las locaciones disponibles
+
+  const handleMoveLocation = async () => {
+    try {
+      const response = await axios.get("/locations");
+      setLocations(response.data);
+    } catch (error) {
+      console.error("Error al obtener las locaciones:", error);
+      alert("Ocurrió un error al obtener las locaciones.");
+    }
+  };
+
+
+  const handleSelectLocation = async (locationId) => {
+    try {
+      // eslint-disable-next-line no-unused-vars
+      const response = await axios.put(`/assets/${traceabilityAsset.id}`, {
+      location_transfer: locationId,
+      });
+      alert(`Locación actualizada exitosamente. ID de la nueva locación: ${locationId}`);
+      setTraceabilityAsset({ ...traceabilityAsset, location_transfer: locationId }); // Actualiza el estado local
+      
+      // Actualiza la lista de activos en la tabla
+      setLocation((prevLocation) => ({
+        ...prevLocation,
+        assets: prevLocation.assets.map((asset) =>
+          asset.id === traceabilityAsset.id
+            ? { ...asset, location_transfer: locationId }
+            : asset
+        ),
+      }));
+      setLocations([]); // Limpia las locaciones
+    } catch (error) {
+      console.error("Error al actualizar la locación:", error);
+      alert("Ocurrió un error al actualizar la locación.");
+    }
+  };
+
+
+  const handleReturnLocation = async () => {
+    try {
+      await axios.put(`/assets/${traceabilityAsset.id}`, {
+        location_transfer: null,
+      });
+      alert("El activo ha regresado a su locación original.");
+      
+      setTraceabilityAsset({
+        ...traceabilityAsset,
+        location_transfer: null,
+      }); 
+
+      setLocation((prevLocation) => ({
+        ...prevLocation,
+        assets: prevLocation.assets.map((asset) =>
+          asset.id === traceabilityAsset.id
+            ? { ...asset, location_transfer: null }
+            : asset
+        ),
+      }));
+    } catch (error) {
+      console.error("Error al regresar a la locación original:", error);
+      alert("Ocurrió un error al intentar regresar a la locación original.");
+    }
+  };
+  
+
+
 
   if (!location) {
     return <p className="text-center mt-4">Cargando detalles de la locación...</p>;
@@ -817,6 +911,7 @@ const LocationDetails = () => {
               <th>Detalles</th>
               <th>Observaciones</th>
               <th>Mantenimientos</th>
+              <th>Trazabilidad</th>
             </tr>
           </thead>
           <tbody>
@@ -833,8 +928,17 @@ const LocationDetails = () => {
                 <td>{asset.marca}</td>
                 <td>{asset.modelo}</td>
                 <td>{asset.resguardante}</td>
-                <td style={{ color: asset.status ? "blue" : "red" }}>
-                  {asset.status ? "Activo" : "Inactivo"}
+                <td
+                  style={{
+                    color: asset.location_transfer ? "gray" : asset.status ? "blue" : "red",
+                    fontWeight: asset.location_transfer ? "bold" : "normal",
+                  }}
+                >
+                  {asset.location_transfer
+                    ? "Transferido"
+                    : asset.status
+                    ? "Activo"
+                    : "Inactivo"}
                 </td>
                 <td>
                   <button
@@ -877,12 +981,20 @@ const LocationDetails = () => {
                     <i className="fa-solid fa-screwdriver-wrench"></i>
                   </button>
                 </td>
+                <td>
+                  <button
+                    className="btn btn-primary btn-sm"
+                    onClick={() => handleOpenTraceability(asset)}
+                  >
+                    <i class="fa-regular fa-clipboard"></i>  
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-        <p>No hay equipos que coincidan con los filtros seleccionados.</p>
+        <p>No se encontraron equipos.</p>
       )}
 
 
@@ -1251,9 +1363,6 @@ const LocationDetails = () => {
               <Typography variant="body1" sx={{ mb: 2 }}>
                 <strong>Icono:</strong>{" "}
                 <i className={`fa-solid ${selectedAsset.icon}`} style={{ color: "#61dafb" }}></i>
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 2 }}>
-                <strong>Ubicación ID:</strong> {selectedAsset.location_id}
               </Typography>
             </div>
           ) : (
@@ -1729,6 +1838,239 @@ const LocationDetails = () => {
             </Button>
           </Box>
         </SwipeableDrawer>
+
+
+        {/* SwipeableDrawer para la trazabilidad */}
+        <SwipeableDrawer
+          anchor="right"
+          open={traceabilityDrawerOpen}
+          onClose={() => setTraceabilityDrawerOpen(false)}
+        >
+          <Box
+            sx={{
+              width: 400,
+              p: 3,
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              bgcolor: "#2b2f38",
+              color: "#ffffff",
+            }}
+          >
+            {isTraceabilityLoading ? (
+              <Typography variant="h5" sx={{ mb: 5, color: "#61dafb" }}>
+                Cargando datos...
+              </Typography>
+            ) : (
+              <>
+                {/* Información de la Locación */}
+                {traceabilityLocation && (
+                  <Box sx={{ mb: 2 }}>
+                    <Typography
+                      variant="h5"
+                      sx={{
+                        color: "#61dafb",
+                        textAlign: "center",
+                        fontWeight: "bold",
+                        mb: 4,
+                      }}
+                    >
+                      Información de la Locación Original
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 2 }}>
+                      <strong>Nombre:</strong> {traceabilityLocation.name}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 2 }}>
+                      <strong>Descripción:</strong> {traceabilityLocation.description}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 2 }}>
+                      <strong>Aula:</strong> {traceabilityLocation.classroom}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 2 }}>
+                      <strong>Piso:</strong> {traceabilityLocation.piso}
+                    </Typography>
+                  </Box>
+                )}
+
+                {/* Información del Equipo */}
+                {traceabilityAsset && (
+                  <Box
+                    sx={{
+                      mb: 3,
+                      p: 2,
+                      border: "1px solid #61dafb",
+                      borderRadius: "8px",
+                      bgcolor: "#1e1e2f",
+                      boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
+                    }}
+                  >
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        color: "#61dafb",
+                        textAlign: "center",
+                        fontWeight: "bold",
+                        mb: 1,
+                      }}
+                    >
+                      Información del Equipo
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                      <strong>ID:</strong> {traceabilityAsset.id}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                      <strong>Descripción:</strong> {traceabilityAsset.descripcion}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                      <strong>Marca:</strong> {traceabilityAsset.marca}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                      <strong>Modelo:</strong> {traceabilityAsset.modelo}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                      <strong>Número de Serie:</strong> {traceabilityAsset.numero_de_serie}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                      <strong>Número de Activo:</strong> {traceabilityAsset.numero_de_activo}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                      <strong>Resguardante:</strong> {traceabilityAsset.resguardante}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                      <strong>Estado:</strong>{" "}
+                      <span
+                        style={{
+                          color: traceabilityAsset.status ? "blue" : "red",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {traceabilityAsset.status ? "Activo" : "Inactivo"}
+                      </span>
+                    </Typography>
+                  </Box>
+                )}
+
+                {/* Botón para Mover de Locación */}
+                {traceabilityAsset && (
+                  <Box>
+                    {traceabilityAsset.location_transfer === null ? (
+                      <Button
+                        variant="contained"
+                        sx={{
+                          mb: 3,
+                          bgcolor: "#fbc02d",
+                          color: "#1e1e2f",
+                          fontWeight: "bold",
+                          ":hover": { bgcolor: "#f9a825" },
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "8px",
+                        }}
+                        onClick={handleMoveLocation}
+                      >
+                        <i className="fa-solid fa-arrow-right"></i>
+                        Mover de Locación
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="contained"
+                        sx={{
+                          mb: 3,
+                          bgcolor: "#2196f3",
+                          color: "#ffffff",
+                          fontWeight: "bold",
+                          ":hover": { bgcolor: "#1976d2" },
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "8px",
+                        }}
+                        onClick={() => {
+                          handleReturnLocation(); 
+                        }}
+                      >
+                        <i className="fa-solid fa-arrow-left"></i>
+                        Regresar a Locación Original
+                      </Button>
+                    )}
+
+                    {/* Mostrar Opciones de Locaciones */}
+                    {traceabilityAsset.location_transfer === null && locations.length > 0 && (
+                      <Box
+                        sx={{
+                          p: 2,
+                          border: "1px solid #61dafb",
+                          borderRadius: "8px",
+                          bgcolor: "#1e1e2f",
+                          mt: 2,
+                        }}
+                      >
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            color: "#61dafb",
+                            textAlign: "center",
+                            fontWeight: "bold",
+                            mb: 2,
+                          }}
+                        >
+                          Seleccionar Nueva Locación
+                        </Typography>
+                        <ul style={{ listStyleType: "none", padding: 0 }}>
+                          {locations
+                            .filter((location) => location.id !== traceabilityAsset.location_id) // Filtrar locaciones
+                            .map((location) => (
+                              <li
+                                key={location.id}
+                                style={{
+                                  cursor: "pointer",
+                                  marginBottom: "10px",
+                                  padding: "10px",
+                                  backgroundColor: "#29293d",
+                                  border: "1px solid #61dafb",
+                                  borderRadius: "5px",
+                                }}
+                                onClick={() => handleSelectLocation(location.id)}
+                              >
+                                <Typography variant="body2">
+                                  <strong>{location.name}</strong> (Aula: {location.classroom}, Piso:{" "}
+                                  {location.piso})
+                                </Typography>
+                              </li>
+                            ))}
+                        </ul>
+                      </Box>
+                    )}
+
+
+                  </Box>
+                )}
+
+              </>
+            )}
+            <Button
+              variant="contained"
+              sx={{
+                mt: "auto",
+                bgcolor: "#61dafb",
+                color: "#000",
+                fontWeight: "bold",
+                ":hover": { bgcolor: "#50b5e8" },
+              }}
+              onClick={() => setTraceabilityDrawerOpen(false)}
+            >
+              Cerrar
+            </Button>
+          </Box>
+        </SwipeableDrawer>
+
+
+
+
+
+
+
 
 
 

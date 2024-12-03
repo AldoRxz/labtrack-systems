@@ -31,8 +31,12 @@ export const getLocationById = async (req, res) => {
         const location = await Location.findByPk(req.params.id, {
             include: [
                 {
-                    model: Asset, 
-                    as: 'assets',
+                    model: Asset,
+                    as: 'assets', // Cambiado al alias correcto
+                },
+                {
+                    model: Asset,
+                    as: 'transferredAssets', // Para incluir también los transferidos
                 },
             ],
         });
@@ -83,7 +87,21 @@ export const getLocationsWithDetails = async (req, res) => {
             include: [
                 {
                     model: Asset,
-                    as: 'assets',
+                    as: 'assets', // Alias actualizado
+                    include: [
+                        {
+                            model: ObservationHistory,
+                            as: 'observations',
+                        },
+                        {
+                            model: MaintenanceRecord,
+                            as: 'maintenances',
+                        },
+                    ],
+                },
+                {
+                    model: Asset,
+                    as: 'transferredAssets', 
                     include: [
                         {
                             model: ObservationHistory,
@@ -112,7 +130,21 @@ export const getLocationDetailsById = async (req, res) => {
             include: [
                 {
                     model: Asset,
-                    as: 'assets',
+                    as: 'assets', // Alias para activos originales
+                    include: [
+                        {
+                            model: ObservationHistory,
+                            as: 'observations',
+                        },
+                        {
+                            model: MaintenanceRecord,
+                            as: 'maintenances',
+                        },
+                    ],
+                },
+                {
+                    model: Asset,
+                    as: 'transferredAssets', 
                     include: [
                         {
                             model: ObservationHistory,
@@ -152,8 +184,21 @@ export const searchAssets = async (req, res) => {
             include: [
                 {
                     model: Asset,
-                    as: 'assets',
-                    required: true, // Solo incluye locaciones con activos coincidentes
+                    as: 'assets', // Alias para activos originales
+                    required: true,
+                    where: {
+                        [Op.or]: [
+                            { descripcion: { [Op.like]: `%${query}%` } },
+                            { marca: { [Op.like]: `%${query}%` } },
+                            { modelo: { [Op.like]: `%${query}%` } },
+                            { numero_de_serie: { [Op.like]: `%${query}%` } },
+                        ],
+                    },
+                },
+                {
+                    model: Asset,
+                    as: 'transferredAssets', // Alias para activos transferidos
+                    required: true,
                     where: {
                         [Op.or]: [
                             { descripcion: { [Op.like]: `%${query}%` } },

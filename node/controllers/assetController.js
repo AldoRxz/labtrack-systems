@@ -73,6 +73,7 @@ export const updateAsset = async (req, res) => {
     resguardante,
     status,
     icon, 
+    location_transfer,
   } = req.body;
 
   try {
@@ -91,6 +92,7 @@ export const updateAsset = async (req, res) => {
       resguardante,
       status,
       icon, 
+      location_transfer,
     });
 
     res.status(200).json(asset);

@@ -50,6 +50,14 @@ export const Asset = sequelize.define('Asset', {
       key: 'id',
     },
   },
+  location_transfer: { 
+    type: DataTypes.BIGINT,
+    allowNull: true,
+    references: {
+      model: 'locations', 
+      key: 'id',
+    },
+  },
 }, {
   tableName: 'assets',
   timestamps: false,

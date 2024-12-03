@@ -7,6 +7,8 @@ const DragAndDropLayout = ({ data }) => {
     const pcs = data.filter(item => item.icon === "fa-computer");
     const monitors = data.filter(item => item.icon === "fa-display");
     const proyector = data.find(item => item.icon === "fa-video");
+    
+    // eslint-disable-next-line
     const pantalla = data.find(item => item.icon === "fa-chalkboard-user");
     const regulador = data.find(item => item.icon === "fa-bolt" );
 
