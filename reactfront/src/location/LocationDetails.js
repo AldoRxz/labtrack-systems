@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import axios from "../axios/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import DragAndDropLayout from "../dragAndDrop/dNd";
+import LTE from "../dragAndDrop/LTE";
 
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
@@ -571,20 +572,10 @@ const LocationDetails = () => {
           </>
         ) : location.classroom === "LTE" ? (
           <>
-            <img
-              src="/classrooms/LTE.png"
-              alt="Classroom LTE"
-              className="img-fluid"
-              style={{
-                maxWidth: "100wh",
-                height: "100vh",
-                border: "2px solid #34a853",
-                borderRadius: "10px",
-              }}
-            />
-            <p className="mt-3" style={{ color: "#34a853" }}>
-              Aula: LTE
-            </p>
+            <Box sx={{ textAlign: "center", backgroundColor:"white", height:"100vh" }}>
+           <LTE data={location.assets} />
+            </Box>
+
           </>
         ) : location.classroom === "LIA" ? (
           <>

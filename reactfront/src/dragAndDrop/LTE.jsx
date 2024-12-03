@@ -2,7 +2,7 @@ import React from "react";
 import { Grid, Box } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 
-const DragAndDropLayout = ({ data }) => {
+const LTE = ({ data }) => {
     // Filtrar las PCs, Monitores, Proyector y Pantalla de los datos
     const pcs = data.filter(item => item.icon === "fa-computer");
     const monitors = data.filter(item => item.icon === "fa-display");
@@ -41,7 +41,9 @@ const DragAndDropLayout = ({ data }) => {
             <img
                 src={pair.pc && pair.monitor && pair.pc.status && pair.monitor.status ? "/assets/DISENOSRESIDENCIA(1).png" : "/assets/DISENOSRESIDENCIA.png"}
                 alt="Residencia"
-                style={{ width: "200px", height: "auto", }}
+                style={{ width: "200px", height: "auto",
+                    transform: "scaleX(-1)", // Voltear horizontalmente
+                 }}
             />
         </Box>
         </Tooltip>
@@ -66,7 +68,9 @@ const DragAndDropLayout = ({ data }) => {
             <img
                 src={proyector && proyector.status ? "/assets/proyector.png" : "/assets/proyector.png"}
                 alt="Residencia"
-                style={{ width: "100px", height: "auto", }}
+                style={{ width: "100px", height: "auto", 
+                    transform: "scaleX(-1)", // Voltear horizontalmente
+                }}
             />
         </Box>
         </Tooltip>
@@ -90,7 +94,9 @@ const DragAndDropLayout = ({ data }) => {
             <img
                 src={pantalla && pantalla.status ? "/assets/pizarron.png" : "/assets/pizarron.png"}
                 alt="Residencia"
-                style={{ width: "150px", height: "auto", }}
+                style={{ width: "150px", height: "auto", 
+                    transform: "scaleX(-1)", // Voltear horizontalmente
+                }}
             />
         </Box>
         </Tooltip>
@@ -98,6 +104,11 @@ const DragAndDropLayout = ({ data }) => {
 
     return (
         <Box sx={{display:"flex", height: "100%", backgroundColor: "transparent", width:"90%", justifyContent:"center",}}>
+            <Box sx={{display:"flex", width:"30%", justifyContent:"center", alignItems:"center" }}>
+                <Box sx={{ textAlign: "center"}}>
+                {pantalla && pantallaItem(pantalla, "pantalla")}
+                </Box>
+            </Box>
           <Box sx={{display:"flex", width:"100%"}}>
                 <Grid container  sx={{ height: "100%", justifyContent: "center", alignItems: "center", width: "100%" }}>
                     {/* Fila 1 */}
@@ -166,13 +177,9 @@ const DragAndDropLayout = ({ data }) => {
                     </Grid>
                 </Grid>
             </Box>
-            <Box sx={{display:"flex", width:"30%", justifyContent:"center", alignItems:"center" }}>
-                <Box sx={{ textAlign: "center"}}>
-                {pantalla && pantallaItem(pantalla, "pantalla")}
-                </Box>
-            </Box>
+            
         </Box>
     );
 };
 
-export default DragAndDropLayout;
+export default LTE;
