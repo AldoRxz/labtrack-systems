@@ -7,6 +7,8 @@ const DragAndDropLayout = ({ data }) => {
     const pcs = data.filter(item => item.icon === "fa-computer");
     const monitors = data.filter(item => item.icon === "fa-display");
     const proyector = data.find(item => item.icon === "fa-proyector");
+    
+    // eslint-disable-next-line
     const pantalla = data.find(item => item.icon === "fa-chalkboard-user");
 
     // Combinar PC y Monitor por lugar (asumiendo un campo común `lugar`)
