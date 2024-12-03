@@ -8,7 +8,7 @@ const LTE = ({ data }) => {
     const monitors = data.filter(item => item.icon === "fa-display");
     const proyector = data.find(item => item.icon === "fa-video");
     const pantalla = data.find(item => item.icon === "fa-chalkboard-user");
-
+    const regulador = data.find(item => item.icon === "fa-bolt" );
 
     // Combinar PC y Monitor por lugar (asumiendo un campo común `lugar`)
     const pairedItems = pcs.map(pc => {
@@ -75,6 +75,31 @@ const LTE = ({ data }) => {
         </Box>
         </Tooltip>
     );
+
+    const reguladorItem = (regulador, key) => (
+        <Tooltip
+            title={
+                regulador ? (
+                    <div key={key} >
+                        <h5 style={{ margin: 0 }}>Datos de Regulador</h5>
+                        <p style={{ margin: 0 }}>Regulador Marca: {regulador.marca}</p>
+                        <p style={{ margin: 0 }}>Regulador Modelo: {regulador.modelo}</p>
+                        <p style={{ margin: 0 }}>Regulador Número de Serie: {regulador.numero_de_serie}</p>
+                        <p style={{ margin: 0 }}>Regulador Status: {regulador.status ? "Activo" : "Inactivo"}</p>
+                    </div>
+                ) : "Información no disponible"
+            }
+            arrow
+        >
+        <Box sx={{ textAlign: "center"}}>
+            <img
+                src={regulador && regulador.status ? "/assets/regulador.png" : "/assets/regulador.png"}
+                alt="Residencia"
+                style={{ width: "90px", height: "auto", }}
+            />
+        </Box>
+        </Tooltip>
+    );
     const pantallaItem = (pantalla, key) => (
         <Tooltip
             title={
@@ -103,44 +128,48 @@ const LTE = ({ data }) => {
     );
 
     return (
-        <Box sx={{display:"flex", height: "100%", backgroundColor: "transparent", width:"90%", justifyContent:"center",}}>
+        <Box sx={{ maxHeight: 'calc(120vh - 150px)', overflowY: 'auto', width: '100%', overflowX: 'auto', justifyContent:"center"}}>
+        <Box sx={{display:"flex", height: "100%", backgroundColor: "transparent", width:"100%", justifyContent:"center", minWidth:"100vh" }}>
             <Box sx={{display:"flex", width:"30%", justifyContent:"center", alignItems:"center" }}>
-                <Box sx={{ textAlign: "center"}}>
+            <Box sx={{ textAlign: "center"}}>
+                <Box sx={{mb:"250px"}}>
+                {regulador && reguladorItem(regulador, "regulador")}
+                </Box >
                 {pantalla && pantallaItem(pantalla, "pantalla")}
                 </Box>
             </Box>
           <Box sx={{display:"flex", width:"100%"}}>
-                <Grid container  sx={{ height: "100%", justifyContent: "center", alignItems: "center", width: "100%" }}>
+                <Grid container  sx={{ height: "100%", justifyContent: "center", alignItems: "center", width: "100%",pt:'40px'  }}>
                     {/* Fila 1 */}
-                    <Grid container item xs={12} sx={{ }}>
+                    <Grid container item xs={12} sx={{ justifyContent:"right" }}>
                         {pairedItems.slice(0, 3).map((pair, index) =>
                             renderPairedItem(pair, `pair-row1-${index}`)
                         )}
                     </Grid>
 
                     {/* Fila 2 */}
-                    <Grid container item xs={12} >
+                    <Grid container item xs={12} sx={{ justifyContent:"right" }}>
                         {pairedItems.slice(3, 6).map((pair, index) =>
                             renderPairedItem(pair, `pair-row2-${index}`)
                         )}
                     </Grid>
 
                     {/* Fila 3 */}
-                    <Grid container item xs={12} >
+                    <Grid container item xs={12} sx={{ justifyContent:"right" }}>
                         {pairedItems.slice(6, 9).map((pair, index) =>
                             renderPairedItem(pair, `pair-row3-${index}`)
                         )}
                     </Grid>
 
                     {/* Fila 4 */}
-                    <Grid container item xs={12}>
+                    <Grid container item xs={12} sx={{ justifyContent:"right" }}>
                         {pairedItems.slice(9, 12).map((pair, index) =>
                             renderPairedItem(pair, `pair-row4-${index}`)
                         )}
                     </Grid>
 
                     {/* Fila 5 (proyector centrado) */}
-                    <Grid container item xs={12} >
+                    <Grid container item xs={12} sx={{ justifyContent:"right" }}>
                         <Grid item xs={2} /> {/* Espacio vacío */}
                         <Grid item xs={8}>
                         {proyector && proyectorItem(proyector, "proyector")}
@@ -149,28 +178,28 @@ const LTE = ({ data }) => {
                     </Grid>
 
                     {/* Fila 6 */}
-                    <Grid container item xs={12} >
+                    <Grid container item xs={12} sx={{ justifyContent:"right" }}>
                         {pairedItems.slice(12, 15).map((pair, index) =>
                             renderPairedItem(pair, `pair-row6-${index}`)
                         )}
                     </Grid>
 
                     {/* Fila 7 */}
-                    <Grid container item xs={12} >
+                    <Grid container item xs={12} sx={{ justifyContent:"right" }}>
                         {pairedItems.slice(15, 18).map((pair, index) =>
                             renderPairedItem(pair, `pair-row7-${index}`)
                         )}
                     </Grid>
 
                     {/* Fila 8 */}
-                    <Grid container item xs={12} >
+                    <Grid container item xs={12} sx={{ justifyContent:"right" }}>
                         {pairedItems.slice(18, 21).map((pair, index) =>
                             renderPairedItem(pair, `pair-row8-${index}`)
                         )}
                     </Grid>
 
                     {/* Fila 9 */}
-                    <Grid container item xs={12} >
+                    <Grid container item xs={12} sx={{ justifyContent:"right" }}>
                         {pairedItems.slice(21, 24).map((pair, index) =>
                             renderPairedItem(pair, `pair-row9-${index}`)
                         )}
@@ -178,6 +207,7 @@ const LTE = ({ data }) => {
                 </Grid>
             </Box>
             
+            </Box>
         </Box>
     );
 };

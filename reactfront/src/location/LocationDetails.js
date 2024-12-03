@@ -4,7 +4,7 @@ import axios from "../axios/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import DragAndDropLayout from "../dragAndDrop/dNd";
 import LTE from "../dragAndDrop/LTE";
-
+import LWI from "../dragAndDrop/LWI";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
@@ -368,8 +368,6 @@ const LocationDetails = () => {
   };
   
 
-  
-
   // Abrir y cerrar detalles de mantenimientos
   const handleOpenMaintenances = async (asset) => {
     try {
@@ -597,6 +595,10 @@ const LocationDetails = () => {
         }}
       >
 
+<Link to="/locations" className="btn btn-primary mt-4">
+        Volver a Locaciones
+      </Link>
+
         {/* Usuario */}
         <div
           style={{
@@ -657,59 +659,27 @@ const LocationDetails = () => {
       </div>
 
       {/* Mostrar la imagen del classroom */}
-      <div >
+      <div className="text-center my-4">
         {location.classroom === "LWI" ? (
           <>
-           <Box
-            sx={{
-              textAlign: "center",
-              backgroundColor: "white",
-              height: "100%",
-              width:"100%",
-              minHeight: "100vh",
-              display: "flex", // Asegura que el contenido esté alineado horizontalmente
-              overflowX: "auto", // Activa el scroll horizontal
-              overflowY: "hidden", // Evita el scroll vertical si no es necesario
-              whiteSpace: "nowrap", // Impide el ajuste del contenido a nuevas líneas
-              "&::-webkit-scrollbar": {
-                height: "8px", // Ajusta la altura del scrollbar horizontal
-              },
-              "&::-webkit-scrollbar-thumb": {
-                backgroundColor: "#888", // Estilo del scrollbar
-                borderRadius: "4px",
-              },
-              "&::-webkit-scrollbar-thumb:hover": {
-                backgroundColor: "#555", // Cambia el color al pasar el mouse
-              },
-            }}
-          >
-           <DragAndDropLayout data={location.assets} />
+          <Box sx={{ textAlign: "center", backgroundColor:"white", height:"100%" }}>
+           <LWI data={location.assets} />
           </Box>
           </>
         ) : location.classroom === "LTE" ? (
           <>
-            <Box sx={{ textAlign: "center", backgroundColor:"white", height:"100%", maxHeight:"100vh"  }}>
+            <Box sx={{ textAlign: "center", backgroundColor:"white", height:"100vh" }}>
            <LTE data={location.assets} />
             </Box>
+
           </>
         ) : location.classroom === "LIA" ? (
           <>
-            <img
-              src="/classrooms/LIA.png"
-              alt="Classroom LIA"
-              className="img-fluid"
-              style={{
-                maxWidth: "100wh",
-                height: "100vh",
-                border: "2px solid #fbbc05",
-                borderRadius: "10px",
-              }}
-            />
-            <p className="mt-3" style={{ color: "#fbbc05" }}>
-              Aula: LIA
-            </p>
+               <Box sx={{ textAlign: "center", backgroundColor:"white", height:"100vh" }}>
+           <DragAndDropLayout data={location.assets} />
+          </Box>
           </>
-        ) : location.classroom === "LIS" ? (
+        ) : location.classroom === "LI" ? (
           <>
             <img
               src="/classrooms/LIS.png"
@@ -2064,21 +2034,6 @@ const LocationDetails = () => {
             </Button>
           </Box>
         </SwipeableDrawer>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     </div>
   );

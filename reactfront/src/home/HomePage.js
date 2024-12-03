@@ -84,7 +84,8 @@ const styles = {
     flexDirection: 'column',
     justifyContent: 'space-between', // Distribuye el contenido verticalmente
     minHeight: '100vh', // Ocupa toda la altura de la ventana
-    backgroundColor: '#1e1e2f',
+    // backgroundColor: '#1e1e2f',
+    backgroundImage: 'url(/planta_alta.png)',
   },
   card: {
     width: '100%',

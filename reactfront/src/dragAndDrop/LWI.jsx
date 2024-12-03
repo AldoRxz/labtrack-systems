@@ -2,7 +2,7 @@ import React from "react";
 import { Grid, Box } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 
-const DragAndDropLayout = ({ data }) => {
+const LWI = ({ data }) => {
     // Filtrar las PCs, Monitores, Proyector y Pantalla de los datos
     const pcs = data.filter(item => item.icon === "fa-computer");
     const monitors = data.filter(item => item.icon === "fa-display");
@@ -50,7 +50,32 @@ const DragAndDropLayout = ({ data }) => {
             }
             arrow
         >
-        <Box sx={{ textAlign: "center", ml: "10px", mr: "25px" }}>
+            <Box
+    sx={{
+        textAlign: "center",
+        // ml: "10px",
+        // mr: "25px",
+        transform: "rotate(0deg)", // Rotar todo el contenedor
+    }}
+>
+    <img
+        src={
+            pair.pc && pair.monitor
+                ? (pair.pc.location_transfer != null || pair.monitor.location_transfer != null)
+                    ? "/assets/lwi_gris.png"
+                    : (pair.pc.status && pair.monitor.status)
+                        ? "/assets/lwi_verde.png"
+                        : "/assets/lwi_rojo.png"
+                : "/assets/lwi_rojo.png"
+        }
+        alt="Residencia"
+        style={{
+            width: "200px",
+            height: "auto",
+        }}
+    />
+</Box>
+        {/* <Box sx={{ textAlign: "center", ml: "10px", mr: "25px" }}>
             <img
                 src={
                     pair.pc && pair.monitor
@@ -62,9 +87,11 @@ const DragAndDropLayout = ({ data }) => {
                         : "/assets/DISENOSRESIDENCIA.png"
                 }
                 alt="Residencia"
-                style={{ width: "200px", height: "auto" }}
+                style={{ width: "200px", height: "auto",
+                }}
             />
-        </Box>
+        </Box> */}
+
         </Tooltip>
     );
 
@@ -87,7 +114,7 @@ const DragAndDropLayout = ({ data }) => {
             <img
                 src={proyector && proyector.status ? "/assets/proyector.png" : "/assets/proyector.png"}
                 alt="Residencia"
-                style={{ width: "100px", height: "auto", }}
+                style={{ width: "50px", height: "auto", }}
             />
         </Box>
         </Tooltip>
@@ -144,34 +171,20 @@ const DragAndDropLayout = ({ data }) => {
 
     return (
         <Box sx={{ maxHeight: 'calc(120vh - 150px)', overflowY: 'auto', width: '100%', overflowX: 'auto', justifyContent:"center"}}>
-        <Box sx={{display:"flex", height: "100%", backgroundColor: "transparent", width:"100%", justifyContent:"center", minWidth:"100vh" }}>
-          <Box sx={{display:"flex", width:"100%"}}>
+        <Box sx={{display:"flex", flexDirection: 'column' ,height: "100vh", backgroundColor: "transparent", width:"100%", minWidth:"100vh" }}>
+          <Box sx={{display:"flex", width:"100%", height:"80%" }}>
                 <Grid container  sx={{ height: "100%", justifyContent: "center", alignItems: "center", width: "100%" }}>
                     {/* Fila 1 */}
-                    <Grid container item xs={12} >
-                        {pairedItems.slice(0, 3).map((pair, index) =>
+                    <Grid container item xs={12}>
+                        {pairedItems.slice(0, 6).map((pair, index) =>
                             renderPairedItem(pair, `pair-row1-${index}`)
                         )}
                     </Grid>
                         
                     {/* Fila 2 */}
                     <Grid container item xs={12} >
-                        {pairedItems.slice(3, 6).map((pair, index) =>
+                        {pairedItems.slice(7, 12).map((pair, index) =>
                             renderPairedItem(pair, `pair-row2-${index}`)
-                        )}
-                    </Grid>
-
-                    {/* Fila 3 */}
-                    <Grid container item xs={12} >
-                        {pairedItems.slice(6, 9).map((pair, index) =>
-                            renderPairedItem(pair, `pair-row3-${index}`)
-                        )}
-                    </Grid>
-
-                    {/* Fila 4 */}
-                    <Grid container item xs={12}>
-                        {pairedItems.slice(9, 12).map((pair, index) =>
-                            renderPairedItem(pair, `pair-row4-${index}`)
                         )}
                     </Grid>
 
@@ -184,46 +197,34 @@ const DragAndDropLayout = ({ data }) => {
                         <Grid item xs={2} /> {/* Espacio vacío */}
                     </Grid>
 
-                    {/* Fila 6 */}
+                    {/* Fila 3 */}
                     <Grid container item xs={12} >
-                        {pairedItems.slice(12, 15).map((pair, index) =>
-                            renderPairedItem(pair, `pair-row6-${index}`)
+                        {pairedItems.slice(13, 18).map((pair, index) =>
+                            renderPairedItem(pair, `pair-row3-${index}`)
+                        )}
+                    </Grid>
+                        
+                    {/* Fila 4 */}
+                    <Grid container item xs={12}>
+                        {pairedItems.slice(19, 24).map((pair, index) =>
+                            renderPairedItem(pair, `pair-row4-${index}`)
                         )}
                     </Grid>
 
-                    {/* Fila 7 */}
-                    <Grid container item xs={12} >
-                        {pairedItems.slice(15, 18).map((pair, index) =>
-                            renderPairedItem(pair, `pair-row7-${index}`)
-                        )}
-                    </Grid>
-
-                    {/* Fila 8 */}
-                    <Grid container item xs={12} >
-                        {pairedItems.slice(18, 21).map((pair, index) =>
-                            renderPairedItem(pair, `pair-row8-${index}`)
-                        )}
-                    </Grid>
-
-                    {/* Fila 9 */}
-                    <Grid container item xs={12} >
-                        {pairedItems.slice(21, 24).map((pair, index) =>
-                            renderPairedItem(pair, `pair-row9-${index}`)
-                        )}
-                    </Grid>
                 </Grid>
             </Box>
-            <Box sx={{display:"flex", width:"30%", justifyContent:"center", alignItems:"center"}}>
+            <Box sx={{display:"flex", width:"100%", justifyContent:"center", height:"20%", justifyItems:'space-betwen' }}>
                 <Box sx={{ textAlign: "center"}}>
+                
+                {pantalla && pantallaItem(pantalla, "pantalla")}
+                </Box>
                 <Box sx={{mb:"250px"}}>
                 {regulador && reguladorItem(regulador, "regulador")}
                 </Box >
-                {pantalla && pantallaItem(pantalla, "pantalla")}
-                </Box>
             </Box>
             </Box>
         </Box>
     );
 };
 
-export default DragAndDropLayout;
+export default LWI;

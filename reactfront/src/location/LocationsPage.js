@@ -13,6 +13,7 @@ import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
+import { Grid, Container } from "@mui/material";
 
 
 const LocationsPage = () => {
@@ -402,13 +403,22 @@ const LocationsPage = () => {
       >
         Agregar Locación
       </button>
-
+      <Grid
+        container
+        sx={{
+          justifyContent:"center"
+        }}      
+      >
       {Object.keys(groupedLocations)
         .sort((a, b) => a - b) // Ordenar por número de piso
         .map((piso) => (
-          <div key={piso} className="mb-5">
+          <Grid 
+          item
+          xs={12}
+          md={6}
+          lg={6}
+          >
             <h2 className="text-center">Piso {piso}</h2>
-
             {/* Mostrar imagen según el piso */}
             {piso === "1" && ( 
               <div className="text-center">
@@ -416,7 +426,7 @@ const LocationsPage = () => {
                   src="/planta_baja.png"
                   alt="Planta Baja"
                   className="img-fluid mb-4"
-                  style={{ maxWidth: "600px", height: "auto" }} 
+                  style={{ maxWidth: "90%", height: "auto" }} 
                 />
               </div>
             )}
@@ -426,11 +436,11 @@ const LocationsPage = () => {
                   src="/planta_alta.png"
                   alt="Planta Alta"
                   className="img-fluid mb-4"
-                  style={{ maxWidth: "600px", height: "auto" }} 
+                  style={{ maxWidth: "90%", height: "auto" }} 
                 />
               </div>
             )}
-
+          <Container>
             {/* Tabla de locaciones del piso */}
             <table className="table table-dark table-hover">
               <thead>
@@ -475,9 +485,10 @@ const LocationsPage = () => {
                 ))}
               </tbody>
             </table>
-          </div>
+            </Container>
+          </Grid>
         ))}
-
+      </Grid>
 
       {showAddModal && (
         <div className="modal show d-block" tabIndex="-1">
