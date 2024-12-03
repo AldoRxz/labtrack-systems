@@ -92,7 +92,7 @@ const DragAndDropLayout = ({ data }) => {
                     </Grid>
 
                     {/* Fila 2 */}
-                    <Grid container item xs={12} sx={{mb:"px"}} >
+                    <Grid container item xs={12} >
                         {pairedItems.slice(3, 6).map((pair, index) =>
                             renderPairedItem(pair, `pair-row2-${index}`)
                         )}
@@ -100,14 +100,14 @@ const DragAndDropLayout = ({ data }) => {
 
                     {/* Fila 3 */}
                     <Grid container item xs={12} >
-                        {pairedItems.slice(7, 9).map((pair, index) =>
+                        {pairedItems.slice(6, 9).map((pair, index) =>
                             renderPairedItem(pair, `pair-row3-${index}`)
                         )}
                     </Grid>
 
                     {/* Fila 4 */}
                     <Grid container item xs={12}>
-                        {pairedItems.slice(10, 12).map((pair, index) =>
+                        {pairedItems.slice(9, 12).map((pair, index) =>
                             renderPairedItem(pair, `pair-row4-${index}`)
                         )}
                     </Grid>
@@ -130,21 +130,21 @@ const DragAndDropLayout = ({ data }) => {
 
                     {/* Fila 7 */}
                     <Grid container item xs={12} >
-                        {pairedItems.slice(16, 18).map((pair, index) =>
+                        {pairedItems.slice(15, 18).map((pair, index) =>
                             renderPairedItem(pair, `pair-row7-${index}`)
                         )}
                     </Grid>
 
                     {/* Fila 8 */}
                     <Grid container item xs={12} >
-                        {pairedItems.slice(19, 21).map((pair, index) =>
+                        {pairedItems.slice(18, 21).map((pair, index) =>
                             renderPairedItem(pair, `pair-row8-${index}`)
                         )}
                     </Grid>
 
                     {/* Fila 9 */}
                     <Grid container item xs={12} >
-                        {pairedItems.slice(22, 24).map((pair, index) =>
+                        {pairedItems.slice(21, 24).map((pair, index) =>
                             renderPairedItem(pair, `pair-row9-${index}`)
                         )}
                     </Grid>
