@@ -81,11 +81,15 @@ const LoginPage = () => {
 const styles = {
   container: {
     display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between', // Distribuye el contenido verticalmente
-    minHeight: '100vh', // Ocupa toda la altura de la ventana
-    // backgroundColor: '#1e1e2f',
-    backgroundImage: 'url(/planta_alta.png)',
+  flexDirection: 'column',
+  justifyContent: 'space-between', // Distribuye el contenido verticalmente
+  alignItems: 'center', // Centra el contenido horizontalmente
+  minHeight: '100vh', // Ocupa toda la altura de la ventana
+  backgroundImage: 'url(/inicio/portada_2-transformed_2.jpeg)',
+  backgroundPosition: 'center', // Centra la imagen en el contenedor
+  backgroundPositionY: '0px', // Centra la imagen en el contenedor
+  backgroundRepeat: 'no-repeat', // Evita que la imagen se repita
+  backgroundSize: 'cover', // Asegura que la imagen cubra todo el fond
   },
   card: {
     width: '100%',
@@ -155,7 +159,6 @@ const styles = {
   },
   footerLogo: {
     height: '60px',
-    objectFit: 'contain',
     filter: 'brightness(0.9)',
     margin: '0 15px', // Espaciado horizontal entre las imágenes
   },

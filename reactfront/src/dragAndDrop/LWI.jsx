@@ -70,7 +70,7 @@ const LWI = ({ data }) => {
         }
         alt="Residencia"
         style={{
-            width: "200px",
+            width: "150px",
             height: "auto",
         }}
     />
@@ -114,7 +114,7 @@ const LWI = ({ data }) => {
             <img
                 src={proyector && proyector.status ? "/assets/proyector.png" : "/assets/proyector.png"}
                 alt="Residencia"
-                style={{ width: "50px", height: "auto", }}
+                style={{ width: "100px", height: "auto", }}
             />
         </Box>
         </Tooltip>
@@ -175,15 +175,15 @@ const LWI = ({ data }) => {
           <Box sx={{display:"flex", width:"100%", height:"80%" }}>
                 <Grid container  sx={{ height: "100%", justifyContent: "center", alignItems: "center", width: "100%" }}>
                     {/* Fila 1 */}
-                    <Grid container item xs={12}>
-                        {pairedItems.slice(0, 6).map((pair, index) =>
+                    <Grid container item xs={12} sx={{ justifyContent:"right" }}>
+                        {pairedItems.slice(0, 7).map((pair, index) =>
                             renderPairedItem(pair, `pair-row1-${index}`)
                         )}
                     </Grid>
                         
                     {/* Fila 2 */}
-                    <Grid container item xs={12} >
-                        {pairedItems.slice(7, 12).map((pair, index) =>
+                    <Grid container item xs={12} sx={{ justifyContent:"right" }}>
+                        {pairedItems.slice(7, 14).map((pair, index) =>
                             renderPairedItem(pair, `pair-row2-${index}`)
                         )}
                     </Grid>
@@ -198,19 +198,11 @@ const LWI = ({ data }) => {
                     </Grid>
 
                     {/* Fila 3 */}
-                    <Grid container item xs={12} >
-                        {pairedItems.slice(13, 18).map((pair, index) =>
+                    <Grid container item xs={12} sx={{ justifyContent:"right" }}>
+                        {pairedItems.slice(14, 21).map((pair, index) =>
                             renderPairedItem(pair, `pair-row3-${index}`)
                         )}
                     </Grid>
-                        
-                    {/* Fila 4 */}
-                    <Grid container item xs={12}>
-                        {pairedItems.slice(19, 24).map((pair, index) =>
-                            renderPairedItem(pair, `pair-row4-${index}`)
-                        )}
-                    </Grid>
-
                 </Grid>
             </Box>
             <Box sx={{display:"flex", width:"100%", justifyContent:"center", height:"20%", justifyItems:'space-betwen' }}>
