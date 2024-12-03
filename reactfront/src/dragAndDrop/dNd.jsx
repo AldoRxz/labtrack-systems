@@ -8,6 +8,7 @@ const DragAndDropLayout = ({ data }) => {
     const monitors = data.filter(item => item.icon === "fa-display");
     const proyector = data.find(item => item.icon === "fa-video");
     const pantalla = data.find(item => item.icon === "fa-chalkboard-user");
+    const regulador = data.find(item => item.icon === "fa-bolt" );
 
 
     // Combinar PC y Monitor por lugar (asumiendo un campo común `lugar`)
@@ -23,11 +24,13 @@ const DragAndDropLayout = ({ data }) => {
             title={
                 pair.pc && pair.monitor ? (
                     <div>
-                        <h5 style={{ margin: 0 }}>Lugar</h5>
+                        <h5 style={{ margin: 0 }}>Datos de PC</h5>
                         <p style={{ margin: 0 }}>PC Marca: {pair.pc.marca}</p>
                         <p style={{ margin: 0 }}>PC Modelo: {pair.pc.modelo}</p>
                         <p style={{ margin: 0 }}>PC Número de Serie: {pair.pc.numero_de_serie}</p>
                         <p style={{ margin: 0 }}>PC Status: {pair.pc.status ? "Activo" : "Inactivo"}</p>
+                        <br></br>
+                        <h5 style={{ margin: 0 }}>Datos de Monitor</h5>
                         <p style={{ margin: 0 }}>Monitor Marca: {pair.monitor.marca}</p>
                         <p style={{ margin: 0 }}>Monitor Modelo: {pair.monitor.modelo}</p>
                         <p style={{ margin: 0 }}>Monitor Número de Serie: {pair.monitor.numero_de_serie}</p>
@@ -52,7 +55,7 @@ const DragAndDropLayout = ({ data }) => {
             title={
                 proyector ? (
                     <div key={key} >
-                        <h5 style={{ margin: 0 }}>Lugar</h5>
+                        <h5 style={{ margin: 0 }}>Datos de Proyector</h5>
                         <p style={{ margin: 0 }}>Proyector Marca: {proyector.marca}</p>
                         <p style={{ margin: 0 }}>Proyector Modelo: {proyector.modelo}</p>
                         <p style={{ margin: 0 }}>Proyector Número de Serie: {proyector.numero_de_serie}</p>
@@ -76,7 +79,7 @@ const DragAndDropLayout = ({ data }) => {
             title={
                 pantalla ? (
                     <div key={key} >
-                        <h5 style={{ margin: 0 }}>Lugar</h5>
+                        <h5 style={{ margin: 0 }}>Datos de Pantalla</h5>
                         <p style={{ margin: 0 }}>Pantalla Marca: {pantalla.marca}</p>
                         <p style={{ margin: 0 }}>Pantalla Modelo: {pantalla.modelo}</p>
                         <p style={{ margin: 0 }}>Pantalla Número de Serie: {pantalla.numero_de_serie}</p>
@@ -96,12 +99,38 @@ const DragAndDropLayout = ({ data }) => {
         </Tooltip>
     );
 
+    const reguladorItem = (regulador, key) => (
+        <Tooltip
+            title={
+                regulador ? (
+                    <div key={key} >
+                        <h5 style={{ margin: 0 }}>Datos de Regulador</h5>
+                        <p style={{ margin: 0 }}>Regulador Marca: {regulador.marca}</p>
+                        <p style={{ margin: 0 }}>Regulador Modelo: {regulador.modelo}</p>
+                        <p style={{ margin: 0 }}>Regulador Número de Serie: {regulador.numero_de_serie}</p>
+                        <p style={{ margin: 0 }}>Regulador Status: {regulador.status ? "Activo" : "Inactivo"}</p>
+                    </div>
+                ) : "Información no disponible"
+            }
+            arrow
+        >
+        <Box sx={{ textAlign: "center"}}>
+            <img
+                src={regulador && regulador.status ? "/assets/regulador.png" : "/assets/regulador.png"}
+                alt="Residencia"
+                style={{ width: "90px", height: "auto", }}
+            />
+        </Box>
+        </Tooltip>
+    );
+
     return (
-        <Box sx={{display:"flex", height: "100%", backgroundColor: "transparent", width:"90%", justifyContent:"center",}}>
+        <Box sx={{ maxHeight: 'calc(120vh - 100px)', overflowY: 'auto', width: '100%', overflowX: 'auto' }}>
+        <Box sx={{display:"flex", height: "100%", backgroundColor: "transparent", width:"100vh", justifyContent:"center"}}>
           <Box sx={{display:"flex", width:"100%"}}>
-                <Grid container  sx={{ height: "100%", justifyContent: "center", alignItems: "center", width: "100%" }}>
+                <Grid container  sx={{ height: "100%", justifyContent: "center", alignItems: "center", width: "100vh" }}>
                     {/* Fila 1 */}
-                    <Grid container item xs={12} sx={{ }}>
+                    <Grid container item xs={12} >
                         {pairedItems.slice(0, 3).map((pair, index) =>
                             renderPairedItem(pair, `pair-row1-${index}`)
                         )}
@@ -166,10 +195,14 @@ const DragAndDropLayout = ({ data }) => {
                     </Grid>
                 </Grid>
             </Box>
-            <Box sx={{display:"flex", width:"30%", justifyContent:"center", alignItems:"center" }}>
+            <Box sx={{display:"flex", width:"30vh", justifyContent:"center", alignItems:"center", mt:"-300px"}}>
                 <Box sx={{ textAlign: "center"}}>
+                <Box sx={{mb:"250px"}}>
+                {regulador && reguladorItem(regulador, "regulador")}
+                </Box >
                 {pantalla && pantallaItem(pantalla, "pantalla")}
                 </Box>
+            </Box>
             </Box>
         </Box>
     );

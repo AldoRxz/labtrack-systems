@@ -563,19 +563,40 @@ const LocationDetails = () => {
       </div>
 
       {/* Mostrar la imagen del classroom */}
-      <div className="text-center my-4">
+      <div >
         {location.classroom === "LWI" ? (
           <>
-          <Box sx={{ textAlign: "center", backgroundColor:"white", height:"100vh" }}>
+           <Box
+            sx={{
+              textAlign: "center",
+              backgroundColor: "white",
+              height: "100%",
+              width:"100%",
+              minHeight: "100vh",
+              display: "flex", // Asegura que el contenido esté alineado horizontalmente
+              overflowX: "auto", // Activa el scroll horizontal
+              overflowY: "hidden", // Evita el scroll vertical si no es necesario
+              whiteSpace: "nowrap", // Impide el ajuste del contenido a nuevas líneas
+              "&::-webkit-scrollbar": {
+                height: "8px", // Ajusta la altura del scrollbar horizontal
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "#888", // Estilo del scrollbar
+                borderRadius: "4px",
+              },
+              "&::-webkit-scrollbar-thumb:hover": {
+                backgroundColor: "#555", // Cambia el color al pasar el mouse
+              },
+            }}
+          >
            <DragAndDropLayout data={location.assets} />
           </Box>
           </>
         ) : location.classroom === "LTE" ? (
           <>
-            <Box sx={{ textAlign: "center", backgroundColor:"white", height:"100vh" }}>
+            <Box sx={{ textAlign: "center", backgroundColor:"white", height:"100%", maxHeight:"100vh"  }}>
            <LTE data={location.assets} />
             </Box>
-
           </>
         ) : location.classroom === "LIA" ? (
           <>
