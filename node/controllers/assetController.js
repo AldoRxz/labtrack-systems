@@ -27,6 +27,7 @@ export const createAsset = async (req, res) => {
         status,
         icon,
         location_id,
+        location_transfer,
       });
       res.status(201).json(newAsset);
     } catch (error) {
@@ -73,6 +74,7 @@ export const updateAsset = async (req, res) => {
     resguardante,
     status,
     icon, 
+    location_transfer,
   } = req.body;
 
   try {
@@ -91,6 +93,7 @@ export const updateAsset = async (req, res) => {
       resguardante,
       status,
       icon, 
+      location_transfer,
     });
 
     res.status(200).json(asset);
