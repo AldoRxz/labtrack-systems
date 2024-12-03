@@ -141,6 +141,7 @@ const LocationDetails = () => {
           numero_de_activo: row[headers.indexOf("NUMERO DE ACTIVO")] || "",
           cog: row[headers.indexOf("COG")] || "",
           resguardante: row[headers.indexOf("RESGUARDANTE")] || "",
+          icon: row[headers.indexOf("ICON")] || "",
           location_id: id, 
         };
       });
