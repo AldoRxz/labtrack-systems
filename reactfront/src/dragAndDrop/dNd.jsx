@@ -72,7 +72,7 @@ const DragAndDropLayout = ({ data }) => {
             </Paper> */}
         <Box sx={{ textAlign: "center", ml:"10px", mr:"50px" }}>
             <img
-                src={pair.pc && pair.monitor && pair.pc.status && pair.monitor.status ? "/assets/DISEÑOS RESIDENCIA(1).png" : "/assets/DISEÑOS RESIDENCIA.png"}
+                src={pair.pc && pair.monitor && pair.pc.status && pair.monitor.status ? "/assets/DISENOSRESIDENCIA(1).png" : "/assets/DISENOSRESIDENCIA.png"}
                 alt="Residencia"
                 style={{ width: "100%", height: "auto", }}
             />
