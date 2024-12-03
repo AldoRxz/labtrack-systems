@@ -114,6 +114,64 @@ const LocationDetails = () => {
     navigate("/");
   };
 
+  const [excelData, setExcelData] = useState(null); 
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const data = new Uint8Array(event.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+  
+     
+      const headers = jsonData[0]; 
+      const rows = jsonData.slice(1); 
+
+      const formattedData = rows.map((row) => {
+        return {
+          descripcion: row[headers.indexOf("Descripcion")] || "",
+          marca: row[headers.indexOf("MARCA")] || "",
+          modelo: row[headers.indexOf("MODELO")] || "",
+          numero_de_serie: row[headers.indexOf("NUMERO DE SERIE")] || "",
+          numero_de_activo: row[headers.indexOf("NUMERO DE ACTIVO")] || "",
+          cog: row[headers.indexOf("COG")] || "",
+          resguardante: row[headers.indexOf("RESGUARDANTE")] || "",
+          location_id: id, 
+        };
+      });
+  
+      setExcelData(formattedData);
+      alert("Archivo procesado con éxito.");
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+
+  const handleSubmitExcelData = async () => {
+    if (!excelData) {
+      alert("No hay datos para enviar. Por favor, carga un archivo Excel.");
+      return;
+    }
+
+    try {
+      const promises = excelData.map((asset) =>
+        axios.post("/assets", asset)
+      );
+
+      await Promise.all(promises);
+      alert("Datos subidos con éxito.");
+      setExcelData(null);
+    } catch (error) {
+      console.error("Error al enviar datos:", error);
+      alert("Hubo un problema al procesar los datos.");
+    }
+  };
+
 
   const handleExportToExcel = async () => {
     try {
@@ -655,6 +713,25 @@ const LocationDetails = () => {
           Exportar la información de la Ubicacióna a exel
       </button>
       </div>
+
+      <div>
+          <label className="btn btn-secondary me-2">
+            Cargar Excel
+            <input
+              type="file"
+              accept=".xlsx, .xls"
+              style={{ display: "none" }}
+              onChange={handleFileUpload}
+            />
+          </label>
+          <button
+            className="btn btn-success"
+            onClick={handleSubmitExcelData}
+            disabled={!excelData}
+          >
+            Subir Equipos desde Excel
+          </button>
+        </div>
 
       {/* Mostrar la imagen del classroom */}
       <div className="text-center my-4">
