@@ -195,19 +195,6 @@ export const searchAssets = async (req, res) => {
                         ],
                     },
                 },
-                {
-                    model: Asset,
-                    as: 'transferredAssets', // Alias para activos transferidos
-                    required: true,
-                    where: {
-                        [Op.or]: [
-                            { descripcion: { [Op.like]: `%${query}%` } },
-                            { marca: { [Op.like]: `%${query}%` } },
-                            { modelo: { [Op.like]: `%${query}%` } },
-                            { numero_de_serie: { [Op.like]: `%${query}%` } },
-                        ],
-                    },
-                },
             ],
         });
 
