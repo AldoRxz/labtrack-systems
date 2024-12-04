@@ -13,11 +13,28 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { deepOrange } from "@mui/material/colors";
 
+import {
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Info as InfoIcon,
+  Visibility as VisibilityIcon,
+  Build as BuildIcon,
+  Assignment as AssignmentIcon,
+} from "@mui/icons-material";
 
 import {
   Box,
   SwipeableDrawer,
   Button,
+  Container,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper,
+  IconButton,
 } from "@mui/material";
 
 const LocationDetails = () => {
@@ -829,6 +846,7 @@ const LocationDetails = () => {
         </div>
       </div>
         {showFilters && (
+          <Container maxWidth='xl' >
           <div className="row g-3 mb-4">
             <div className="col-md-6">
               <label className="form-label" style={{ color: "#61dafb" }}>
@@ -946,10 +964,111 @@ const LocationDetails = () => {
       </div>
         
       </div>
+      </Container>
       )}
       
-
+      <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
       {filteredAssets.length > 0 ? (
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell>ID</TableCell>
+              <TableCell>Tipo</TableCell>
+              <TableCell>Descripción</TableCell>
+              <TableCell>Marca</TableCell>
+              <TableCell>Modelo</TableCell>
+              <TableCell>Resguardante</TableCell>
+              <TableCell>Estado</TableCell>
+              <TableCell>Acciones</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredAssets.map((asset) => (
+              <TableRow key={asset.id}>
+                <TableCell>{asset.id}</TableCell>
+                <TableCell>
+                  <i
+                    className={`fa-solid ${asset.icon} fa-2x`}
+                    style={{ color: "#61dafb" }}
+                  ></i>
+                </TableCell>
+                <TableCell>{asset.descripcion}</TableCell>
+                <TableCell>{asset.marca}</TableCell>
+                <TableCell>{asset.modelo}</TableCell>
+                <TableCell>{asset.resguardante}</TableCell>
+                <TableCell
+                  style={{
+                    color: asset.location_transfer
+                      ? "gray"
+                      : asset.status
+                      ? "blue"
+                      : "red",
+                    fontWeight: asset.location_transfer ? "bold" : "normal",
+                  }}
+                >
+                  {asset.location_transfer
+                    ? "Transferido"
+                    : asset.status
+                    ? "Activo"
+                    : "Inactivo"}
+                </TableCell>
+                <TableCell>
+                  <IconButton
+                    color="warning"
+                    size="small"
+                    onClick={() => {
+                      setSelectedAsset(asset);
+                      setShowEditModal(true);
+                    }}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    color="error"
+                    size="small"
+                    onClick={() => handleDeleteAsset(asset.id)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                  <IconButton
+                    color="info"
+                    size="small"
+                    onClick={() => handleOpenDetails(asset)}
+                  >
+                    <InfoIcon />
+                  </IconButton>
+                  <IconButton
+                    color="secondary"
+                    size="small"
+                    onClick={() => handleOpenObservations(asset)}
+                  >
+                    <VisibilityIcon />
+                  </IconButton>
+                  <IconButton
+                    color="primary"
+                    size="small"
+                    onClick={() => handleOpenMaintenances(asset)}
+                  >
+                    <BuildIcon />
+                  </IconButton>
+                  <IconButton
+                    color="primary"
+                    size="small"
+                    onClick={() => handleOpenTraceability(asset)}
+                  >
+                    <AssignmentIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      ) : (
+        <p>No se encontraron equipos.</p>
+      )}
+    </TableContainer>
+
+      {/* {filteredAssets.length > 0 ? (
         <table className="table table-dark table-hover">
           <thead>
             <tr>
@@ -1048,7 +1167,7 @@ const LocationDetails = () => {
         </table>
       ) : (
         <p>No se encontraron equipos.</p>
-      )}
+      )} */}
 
 
       <Link to="/locations" className="btn btn-primary mt-4">
